@@ -6,6 +6,7 @@ import { IoFilterOutline } from 'react-icons/io5';
 import { IoClose } from 'react-icons/io5';
 import Alert from '../Components/Shared/Alert';
 import NoProduct from '../Images/noproducts.jpeg';
+import FloatingChat from '../Components/Shared/Chatbot';
 const ProductList = () => {
   const location = useLocation();
   const { categoryId } = location.state || {};
@@ -28,10 +29,6 @@ const ProductList = () => {
 
   const userId = localStorage.getItem('userId');
   const loggedIn = localStorage.getItem('isLogin');
-  console.log('userId:', userId);
-  console.log('loggedIn:', loggedIn);
-  
-  
 
   // Derived states for filter options
   const [availableColors, setAvailableColors] = useState([]);
@@ -55,11 +52,6 @@ const ProductList = () => {
   const toggleWishlist = async (productId, e) => {
     e.preventDefault();
     e.stopPropagation();
-
-    if(!loggedIn || !userId) {
-      setAlertMessage({ message: 'Please login to add to wishlist', type: 'error' });
-      return;
-    }
 
     try {
       const isInWishlist = wishlist.some(
@@ -298,7 +290,9 @@ const ProductList = () => {
     return (
       <div className="min-h-screen bg-white">
         <Header transparent={false} />
+
         <div className="flex justify-center items-center h-[70vh]">
+
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-black"></div>
         </div>
       </div>
@@ -375,6 +369,7 @@ const ProductList = () => {
           </button>
         </div>
       </div>
+      <FloatingChat pageType="category" categoryId={categoryId} />
 
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 md:px-8">
@@ -404,18 +399,16 @@ const ProductList = () => {
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
                 {filteredProducts.map((product) => (
                   <div key={product._id} className="group relative">
-                    {loggedIn && (
-                      <button
-                        className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform"
-                        onClick={(e) => toggleWishlist(product._id, e)}
-                      >
-                        {wishlist.some((item) => item.product_id && item.product_id._id === product._id) ? (
-                          <HiHeart size={20} className="text-red-500" />
-                        ) : (
-                          <HiOutlineHeart size={20} className="text-black" />
-                        )}
-                      </button>
-                    )}
+                    <button
+                      className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform"
+                      onClick={(e) => toggleWishlist(product._id, e)}
+                    >
+                      {wishlist.some((item) => item.product_id && item.product_id._id === product._id) ? (
+                        <HiHeart size={20} className="text-red-500" />
+                      ) : (
+                        <HiOutlineHeart size={20} className="text-black" />
+                      )}
+                    </button>
                     {/* Product Image */}
                     <NavLink to="/product" state={{ productId: product._id }}>
                       <div className="relative aspect-[3/4] mb-4 bg-gray-100">

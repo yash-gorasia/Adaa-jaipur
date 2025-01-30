@@ -11,6 +11,7 @@ import FindUsOn from './Components/HomePage/FindUsOn';
 // import FeatureCards from './Components/FeatureCards';
 import ShopByCategory from './Components/HomePage/ShopByCategory'
 import SearchComponent from './Components/Shared/SearchComponent';
+import FloatingChat from './Components/Shared/Chatbot';
 export default function App() {
   const handleScroll = () => {
     window.scrollTo({
@@ -18,22 +19,22 @@ export default function App() {
       behavior: 'smooth', // Smooth scrolling effect
     });
   };
-
+  const userId = localStorage.getItem('userId');
   return (
     <div>
       <Header />
       {/* Add other components here */}
-      <ProductAd  handleScroll={handleScroll}/>
-      <ImageCards/>
+      <ProductAd handleScroll={handleScroll} />
+      <ImageCards />
       {/* <Homepagecard/> */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <RecentlyViewedProducts />
+        <RecentlyViewedProducts />
       </div>
-      <ShopByCategory/>
-      <ServiceCards/>
+      <ShopByCategory />
+      <ServiceCards />
       {/* <FeatureCards/> */}
-      <FindUsOn/>
-
+      <FindUsOn />
+      <FloatingChat userId={userId} pageType={"home"} />
     </div>
 
   );

@@ -12,6 +12,7 @@ import cartRoutes from "./routes/cartRoute.js";
 import wishlistRoutes from "./routes/wishlistRoute.js";
 import uploadRoutes from "./routes/uploadRoute.js";
 import paymentRoute from "./routes/paymentRoute.js";
+import chatRoute from "./routes/chatRoute.js";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -46,7 +47,14 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/orderItems", orderItemRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
+
+// Upload Route
 app.use("/api/upload", uploadRoutes);
+
+// Chatbot Route
+app.use('/api/chatbot', chatRoute);
+
+
 
 // Serve frontend
 app.use(express.static(path.join(__dirname, "frontend", "dist")));

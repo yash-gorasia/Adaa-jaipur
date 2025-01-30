@@ -1,7 +1,9 @@
 import multer from 'multer';
 import { v2 as cloudinary } from 'cloudinary';
 import streamifier from 'streamifier';
-import Category from '../models/categoryModel.js'; 
+import Category from '../models/categoryModel.js';
+import dotenv from "dotenv";
+dotenv.config();
 
 // Use memory storage for multer to store the file in memory
 const storage = multer.memoryStorage();
@@ -9,10 +11,11 @@ const upload = multer({ storage }).single("image"); // 'image' is the field name
 
 // Configure Cloudinary
 cloudinary.config({
-    cloud_name: 'deb7t07bm', 
-    api_key: '513993627366646',       
-    api_secret: '0DDlhdRCFbwrn47jA3wHDb4dwak', 
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
 
 // Function to upload the image to Cloudinary
 const uploadToCloudinary = async (fileBuffer, fileName) => {

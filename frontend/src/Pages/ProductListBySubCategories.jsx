@@ -6,7 +6,7 @@ import { IoFilterOutline } from 'react-icons/io5';
 import { IoClose } from 'react-icons/io5';
 import Alert from '../Components/Shared/Alert';
 import NoProduct from '../Images/noproducts.jpeg';
-
+import FloatingChat from '../Components/Shared/Chatbot';
 const ProductListBySubCategories = () => {
   const location = useLocation();
   const { Category, SubCategory, categoryId, subcategoryId } = location.state || {};
@@ -27,7 +27,7 @@ const ProductListBySubCategories = () => {
 
   const userId = localStorage.getItem('userId');
   const loggedIn = localStorage.getItem('isLogin');
-// Fetch user's wishlist
+  // Fetch user's wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
       try {
@@ -48,16 +48,11 @@ const ProductListBySubCategories = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    if(!loggedIn || !userId) {
-      setAlertMessage({ message: 'Please login to add to wishlist', type: 'error' });
-      return;
-    }
-  
     try {
       const isInWishlist = wishlist.some(
         (item) => item.product_id && item.product_id._id === productId
       );
-  
+
       if (isInWishlist) {
         // Remove from wishlist
         const response = await fetch('/api/wishlist/remove', {
@@ -65,7 +60,7 @@ const ProductListBySubCategories = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_id: userId, product_id: productId }),
         });
-  
+
         if (response.ok) {
           setWishlist((prev) =>
             prev.filter((item) => item.product_id && item.product_id._id !== productId)
@@ -81,13 +76,13 @@ const ProductListBySubCategories = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ user_id: userId, product_id: productId }),
         });
-  
+
         if (response.ok) {
           const newWishlistItem = await response.json();
-  
+
           // Add to wishlist state
           setWishlist((prev) => [...prev, newWishlistItem]);
-  
+
           // Update the button color immediately
           setAlertMessage({ message: 'Added to wishlist!', type: 'success' });
         } else {
@@ -196,11 +191,10 @@ const ProductListBySubCategories = () => {
                     : [...prev, size]
                 );
               }}
-              className={`p-2 border text-sm ${
-                selectedSizes.includes(size)
+              className={`p-2 border text-sm ${selectedSizes.includes(size)
                   ? 'border-black bg-black text-white'
                   : 'border-gray-200 hover:border-gray-300'
-              }`}
+                }`}
             >
               {size}
             </button>
@@ -243,31 +237,7 @@ const ProductListBySubCategories = () => {
     </div>
   );
 
-  // Add to wishlist function
-  const addToWishlist = async (productId, e) => {
-    e.stopPropagation();
-    if (!loggedIn) {
-      setAlertMessage({ message: 'Please login to add to wishlist', type: 'error' });
-      return;
-    }
-    try {
-      const user_id = userId;
-      const response = await fetch('/api/wishlist/add', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id, product_id: productId }),
-      });
 
-      if (response.ok) {
-        setAlertMessage({ message: 'Product added to wishlist', type: 'success' });
-      } else {
-        setAlertMessage({ message: 'Product already in wishlist', type: 'error' });
-      }
-    } catch (error) {
-      console.error('Error adding to wishlist:', error);
-      setAlertMessage({ message: 'Server error. Please try again later.', type: 'error' });
-    }
-  };
 
   if (loading) {
     return (
@@ -306,6 +276,7 @@ const ProductListBySubCategories = () => {
 
       {/* Breadcrumb Navigation */}
       <div className="pt-20 px-4 md:px-8 max-w-7xl mx-auto md:mt-[5%]">
+        <FloatingChat pageType={"subcategory"} userId={userId} categoryId={categoryId} subCategoryId={subcategoryId} />
         <nav className="flex space-x-2 text-sm text-gray-500">
           <NavLink to="/products" state={{ categoryId }} className="hover:text-gray-900">
             {Category}
@@ -348,79 +319,79 @@ const ProductListBySubCategories = () => {
 
           {/* Products Grid */}
           <div className="flex-1">
-          <div className="flex-1">
-      {filteredProducts.length === 0 ? (
-      <div className="flex flex-col items-center justify-center h-96">
-      <img
-        src={NoProduct}
-        alt="No products found"
-        className="w-40 h-40 mb-4"
-      />
-      <h2 className="text-xl font-semibold text-gray-900">Oops! No products found.</h2>
-      <p className="text-sm text-gray-500 mt-2">
-        Looks like we're fresh out of {SubCategory.toLowerCase()}... Time to explore something new!
-      </p>
-    </div>
-  ) : (
-    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
-      {filteredProducts.map((product) => (
-        <div key={product._id} className="group relative ">
-           <button
-                                                         className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform"
-                                                         onClick={(e) => toggleWishlist(product._id, e)}
-                                                       >
-                                                         {wishlist.some((item) => item.product_id && item.product_id._id === product._id) ? (
-                                                           <HiHeart size={20} className="text-red-500" />
-                                                         ) : (
-                                                           <HiOutlineHeart size={20} className="text-black" />
-                                                         )}
-                                                       </button>
-          {/* Product Image */}
-          <NavLink to="/product" state={{ productId: product._id }}>
-            <div className="relative aspect-[3/4] mb-4 bg-gray-100">
-              <img
-                src={product.image[0].replace("'\'", "/")}
-                alt={product.name}
-                className="absolute inset-0 w-full h-full object-cover object-center"
-              />
-              {/* Hover Actions */}
-              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-opacity">
-                <div className="absolute bottom-4 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-              
+            <div className="flex-1">
+              {filteredProducts.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-96">
+                  <img
+                    src={NoProduct}
+                    alt="No products found"
+                    className="w-40 h-40 mb-4"
+                  />
+                  <h2 className="text-xl font-semibold text-gray-900">Oops! No products found.</h2>
+                  <p className="text-sm text-gray-500 mt-2">
+                    Looks like we're fresh out of {SubCategory.toLowerCase()}... Time to explore something new!
+                  </p>
                 </div>
-              </div>
-            </div>
-          </NavLink>
+              ) : (
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+                  {filteredProducts.map((product) => (
+                    <div key={product._id} className="group relative ">
+                      <button
+                        className="absolute top-2 right-2 z-10 p-2 bg-white rounded-full shadow-lg hover:scale-110 transition-transform"
+                        onClick={(e) => toggleWishlist(product._id, e)}
+                      >
+                        {wishlist.some((item) => item.product_id && item.product_id._id === product._id) ? (
+                          <HiHeart size={20} className="text-red-500" />
+                        ) : (
+                          <HiOutlineHeart size={20} className="text-black" />
+                        )}
+                      </button>
+                      {/* Product Image */}
+                      <NavLink to="/product" state={{ productId: product._id }}>
+                        <div className="relative aspect-[3/4] mb-4 bg-gray-100">
+                          <img
+                            src={product.image[0].replace("'\'", "/")}
+                            alt={product.name}
+                            className="absolute inset-0 w-full h-full object-cover object-center"
+                          />
+                          {/* Hover Actions */}
+                          <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 transition-opacity">
+                            <div className="absolute bottom-4 left-0 right-0 flex justify-center opacity-0 group-hover:opacity-100 transition-opacity">
 
-          {/* Product Info */}
-          <div className="space-y-1">
-            <h3 className="text-sm font-medium text-gray-900 truncate">
-              {product.name}
-            </h3>
-            <p className="text-sm text-gray-500 line-clamp-1">
-              {product.description}
-            </p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-sm font-medium text-gray-900">
-                ₹{product.CurrentPrice}
-              </p>
-              {product.discount > 0 && (
-                <>
-                  <p className="text-xs text-gray-500 line-through">
-                    ₹{product.MRP}
-                  </p>
-                  <p className="text-xs text-green-600">
-                    {Math.round(((product.MRP - product.CurrentPrice) / product.MRP) * 100)}% OFF
-                  </p>
-                </>
+                            </div>
+                          </div>
+                        </div>
+                      </NavLink>
+
+                      {/* Product Info */}
+                      <div className="space-y-1">
+                        <h3 className="text-sm font-medium text-gray-900 truncate">
+                          {product.name}
+                        </h3>
+                        <p className="text-sm text-gray-500 line-clamp-1">
+                          {product.description}
+                        </p>
+                        <div className="flex items-baseline gap-2">
+                          <p className="text-sm font-medium text-gray-900">
+                            ₹{product.CurrentPrice}
+                          </p>
+                          {product.discount > 0 && (
+                            <>
+                              <p className="text-xs text-gray-500 line-through">
+                                ₹{product.MRP}
+                              </p>
+                              <p className="text-xs text-green-600">
+                                {Math.round(((product.MRP - product.CurrentPrice) / product.MRP) * 100)}% OFF
+                              </p>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               )}
             </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
           </div>
         </div>
       </div>

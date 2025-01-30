@@ -9,6 +9,7 @@ import { saveViewedProduct } from '../Components/Shared/product-storage-utils';
 import CompactServiceBadge from '../Components/Shared/CompactServiceBadge';
 import Alert from '../Components/Shared/Alert';
 import { HiOutlineHeart, HiHeart } from 'react-icons/hi';
+import FloatingChat from '../Components/Shared/Chatbot';
 
 
 const ProductPage = () => {
@@ -39,105 +40,100 @@ const ProductPage = () => {
     const encodedText = encodeURIComponent(text)
     const loggedIn = localStorage.getItem('isLogin');
     const userId = localStorage.getItem('userId');
-useEffect(() => {
-    const fetchWishlist = async () => {
-      try {
-        const response = await fetch(`/api/wishlist/${userId}`);
-        const data = await response.json();
-        setWishlist(data.wishlistItems);
-      } catch (error) {
-        console.error('Error fetching wishlist:', error);
-        setAlertMessage({ message: 'Failed to fetch wishlist.', type: 'error' });
-      }
-    };
+    useEffect(() => {
+        const fetchWishlist = async () => {
+            try {
+                const response = await fetch(`/api/wishlist/${userId}`);
+                const data = await response.json();
+                setWishlist(data.wishlistItems);
+            } catch (error) {
+                console.error('Error fetching wishlist:', error);
+                setAlertMessage({ message: 'Failed to fetch wishlist.', type: 'error' });
+            }
+        };
 
-    if (userId) {
-      fetchWishlist();
-    }
-  }, [userId, forceUpdate]); // Add forceUpdate as a dependency
-  const shareLink = () => {
-    const encodedUrl = encodeURIComponent(url);
-    const encodedText = encodeURIComponent(text);
-
-    const shareUrls = {
-       
-    };
-
-    if (navigator.share) {
-        // Use Web Share API for mobile devices
-        navigator
-            .share({
-                title: text,
-                url: url,
-            })
-            .catch((error) => console.log("Error sharing:", error));
-    } else if (shareUrls[platform]) {
-        // Open the share URL in a new tab for desktop users
-        window.open(shareUrls[platform], "_blank");
-    } else {
-        console.error("Unsupported platform");
-    }
-};
-  const toggleWishlist = async (productId, e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if(!loggedIn || !userId) {
-        setAlertMessage({ message: 'Please login to add to wishlist', type: 'error' });
-        return;
-      }
-  
-    try {
-      const isInWishlist = wishlist.some(
-        (item) => item.product_id && item.product_id._id === productId
-      );
-  
-      if (isInWishlist) {
-        // Remove from wishlist
-        const response = await fetch('/api/wishlist/remove', {
-          method: 'DELETE',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: userId, product_id: productId }),
-        });
-  
-        if (response.ok) {
-          setWishlist((prev) =>
-            prev.filter((item) => item.product_id && item.product_id._id !== productId)
-          );
-          setAlertMessage({ message: 'Removed from wishlist!', type: 'success' });
-        } else {
-          throw new Error('Failed to remove from wishlist');
+        if (userId) {
+            fetchWishlist();
         }
-      } else {
-        // Add to wishlist
-        const response = await fetch('/api/wishlist/add', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ user_id: userId, product_id: productId }),
-        });
-  
-        if (response.ok) {
-          const newWishlistItem = await response.json();
-  
-          // Add to wishlist state
-          setWishlist((prev) => [...prev, newWishlistItem]);
-  
-          // Update the button color immediately
-          setAlertMessage({ message: 'Added to wishlist!', type: 'success' });
+    }, [userId, forceUpdate]); // Add forceUpdate as a dependency
+    const shareLink = () => {
+        const encodedUrl = encodeURIComponent(url);
+        const encodedText = encodeURIComponent(text);
+
+        const shareUrls = {
+
+        };
+
+        if (navigator.share) {
+            // Use Web Share API for mobile devices
+            navigator
+                .share({
+                    title: text,
+                    url: url,
+                })
+                .catch((error) => console.log("Error sharing:", error));
+        } else if (shareUrls[platform]) {
+            // Open the share URL in a new tab for desktop users
+            window.open(shareUrls[platform], "_blank");
         } else {
-          throw new Error('Failed to add to wishlist');
+            console.error("Unsupported platform");
         }
-      }
-    } catch (error) {
-      console.error('Error updating wishlist:', error);
-      setAlertMessage({ message: 'Failed to update wishlist.', type: 'error' });
-    }
-    setForceUpdate(!forceUpdate); // Trigger re-render
-  };
+    };
+    const toggleWishlist = async (productId, e) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        try {
+            const isInWishlist = wishlist.some(
+                (item) => item.product_id && item.product_id._id === productId
+            );
+
+            if (isInWishlist) {
+                // Remove from wishlist
+                const response = await fetch('/api/wishlist/remove', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, product_id: productId }),
+                });
+
+                if (response.ok) {
+                    setWishlist((prev) =>
+                        prev.filter((item) => item.product_id && item.product_id._id !== productId)
+                    );
+                    setAlertMessage({ message: 'Removed from wishlist!', type: 'success' });
+                } else {
+                    throw new Error('Failed to remove from wishlist');
+                }
+            } else {
+                // Add to wishlist
+                const response = await fetch('/api/wishlist/add', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, product_id: productId }),
+                });
+
+                if (response.ok) {
+                    const newWishlistItem = await response.json();
+
+                    // Add to wishlist state
+                    setWishlist((prev) => [...prev, newWishlistItem]);
+
+                    // Update the button color immediately
+                    setAlertMessage({ message: 'Added to wishlist!', type: 'success' });
+                } else {
+                    throw new Error('Failed to add to wishlist');
+                }
+            }
+        } catch (error) {
+            console.error('Error updating wishlist:', error);
+            setAlertMessage({ message: 'Failed to update wishlist.', type: 'error' });
+        }
+        setForceUpdate(!forceUpdate); // Trigger re-render
+    };
     // Add to cart function
     const addToCart = async (productId, e) => {
         e.stopPropagation();
-        if (!loggedIn || !userId) {
+        if (!loggedIn) {
             setAlertMessage({ message: 'Please login to add to cart', type: 'error' });
             return;
         }
@@ -183,6 +179,34 @@ useEffect(() => {
         } catch (error) {
             console.error('Error adding to cart:', error);
             setAlertMessage({ message: 'Server error. Please try again later.', type: 'error' });
+        }
+    };
+
+    // Add to wishlist function
+    const addToWishlist = async (productId, e) => {
+        e.stopPropagation();
+        if (!loggedIn) {
+            setWishlistMessage('Please login to add to wishlist');
+            setTimeout(() => setWishlistMessage(''), 2000);
+            return;
+        }
+        try {
+            const user_id = userId;
+            const response = await fetch('/api/wishlist/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id, product_id: productId }),
+            });
+
+            if (response.ok) {
+                setWishlistMessage('Product added to wishlist');
+                setTimeout(() => setWishlistMessage(''), 2000);
+            } else {
+                setWishlistMessage('Product already in wishlist');
+                setTimeout(() => setWishlistMessage(''), 2000);
+            }
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
         }
     };
 
@@ -259,17 +283,18 @@ useEffect(() => {
         <div className="min-h-screen bg-white">
             <Header transparent={false} />
             <div className="max-w-7xl mx-auto px-4 md:px-8 py-6 md:py-12 md:mt-[5%]">
+                <FloatingChat pageType="product" productId={product._id} />
                 <div className="lg:grid lg:grid-cols-2 lg:gap-16">
                     {/* Image Gallery */}
                     <div className="space-y-6">
                         <div className="relative aspect-[3/4] bg-gray-50">
-                            <img 
+                            <img
                                 src={product.image[currentImageIndex]}
                                 alt={product.name}
                                 className="w-full h-full object-cover cursor-zoom-in"
                                 onClick={openLightbox}
                             />
-                            <button 
+                            <button
                                 onClick={handlePrevImage}
                                 className="absolute left-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all"
                             >
@@ -277,7 +302,7 @@ useEffect(() => {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                                 </svg>
                             </button>
-                            <button 
+                            <button
                                 onClick={handleNextImage}
                                 className="absolute right-4 top-1/2 -translate-y-1/2 p-2 rounded-full bg-white/90 hover:bg-white shadow-lg transition-all"
                             >
@@ -286,15 +311,14 @@ useEffect(() => {
                                 </svg>
                             </button>
                         </div>
-                        
+
                         <div className="flex gap-3 overflow-x-auto scrollbar-hide">
                             {product.image.map((img, idx) => (
                                 <button
                                     key={idx}
                                     onClick={() => setCurrentImageIndex(idx)}
-                                    className={`relative flex-shrink-0 w-20 aspect-[3/4] ${
-                                        currentImageIndex === idx ? 'ring-2 ring-black' : 'ring-1 ring-gray-200'
-                                    }`}
+                                    className={`relative flex-shrink-0 w-20 aspect-[3/4] ${currentImageIndex === idx ? 'ring-2 ring-black' : 'ring-1 ring-gray-200'
+                                        }`}
                                 >
                                     <img
                                         src={img}
@@ -323,7 +347,7 @@ useEffect(() => {
                                 </>
                             )}
                         </div>
-                                
+
                         {/* Sizes */}
                         <div className="mb-8">
                             <h3 className="text-sm font-medium mb-4">Select Size</h3>
@@ -335,15 +359,15 @@ useEffect(() => {
                                         disabled={size.stock === 0}
                                         className={`
                                             relative h-12 border transition-all
-                                            ${selectedSize === size.size 
-                                                ? 'border-black bg-black text-white' 
+                                            ${selectedSize === size.size
+                                                ? 'border-black bg-black text-white'
                                                 : 'border-gray-200 hover:border-gray-300'
                                             }
                                             ${size.stock === 0 ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
                                         `}
                                     >
                                         {size.size}
-                                  
+
                                     </button>
                                 ))}
                             </div>
@@ -371,8 +395,8 @@ useEffect(() => {
 
                         {/* Action Buttons */}
                         <div className="flex flex-col sm:flex-row gap-3 mb-8">
-                            <button 
-                                onClick={(e) => addToCart(product._id, e)} 
+                            <button
+                                onClick={(e) => addToCart(product._id, e)}
                                 className="flex-1 bg-black text-white h-12 px-6 hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
                             >
                                 <ShoppingBag size={18} />
@@ -384,24 +408,24 @@ useEffect(() => {
                             >
                                 <Heart size={18} />
                             </button> */}
-                                 <button
-                                                                           className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
-                                                                           onClick={(e) => toggleWishlist(product._id, e)}
-                                                                         >
-                                                                           {wishlist.some((item) => item.product_id && item.product_id._id === product._id) ? (
-                                                                             <HiHeart size={20} className="text-red-500" />
-                                                                           ) : (
-                                                                             <HiOutlineHeart size={20} className="text-black" />
-                                                                           )}
-                                                                         </button>
-                                                                         <button
-            onClick={shareLink}
-            className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
-        >
-            <Share2 size={18} />
-        </button>
+                            <button
+                                className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
+                                onClick={(e) => toggleWishlist(product._id, e)}
+                            >
+                                {wishlist.some((item) => item.product_id && item.product_id._id === product._id) ? (
+                                    <HiHeart size={20} className="text-red-500" />
+                                ) : (
+                                    <HiOutlineHeart size={20} className="text-black" />
+                                )}
+                            </button>
+                            <button
+                                onClick={shareLink}
+                                className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
+                            >
+                                <Share2 size={18} />
+                            </button>
                         </div>
-                        <CompactServiceBadge className='m-auto w-full'/> 
+                        <CompactServiceBadge className='m-auto w-full' />
 
                         {/* Product Details */}
                         <div className="border-t border-gray-200">
@@ -410,7 +434,7 @@ useEffect(() => {
                                 className="w-full py-4 flex justify-between items-center"
                             >
                                 <span className="text-sm font-medium">Product Details</span>
-                                <ChevronDown 
+                                <ChevronDown
                                     size={18}
                                     className={`transition-transform ${openSection === 'details' ? 'rotate-180' : ''}`}
                                 />
@@ -441,11 +465,11 @@ useEffect(() => {
                     </div>
                 </div>
             </div>
-            
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <RecommendedProducts categoryId={product.category_id} currentproductid={product._id}/>
+                <RecommendedProducts categoryId={product.category_id} currentproductid={product._id} />
             </div>
-                            
+
             {/* Lightbox */}
             {isLightboxOpen && (
                 <ImageLightbox
