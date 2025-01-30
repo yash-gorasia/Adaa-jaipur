@@ -14,29 +14,21 @@ import uploadRoutes from "./routes/uploadRoute.js";
 import paymentRoute from "./routes/paymentRoute.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createServer } from "@vercel/node"; // Needed for Vercel
 
 dotenv.config();
 
-const port = process.env.PORT || 8000;
-
-// Fix __dirname issue in ES Module
+// Fix __dirname for ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 connectDB();
 
 const app = express();
-
-app.use(
-    cors({
-        origin: "*", // Allow request from frontend
-        credentials: true,
-    })
-);
-
+app.use(cors({ origin: "*", credentials: true }));
 app.use(express.json());
 
-// Routes
+// API Routes
 app.use("/api/payment", paymentRoute);
 app.use("/api/users", userRoutes);
 app.use("/api/products", productRoutes);
@@ -48,13 +40,12 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/wishlist", wishlistRoutes);
 app.use("/api/upload", uploadRoutes);
 
-// Serve frontend
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-
+// Serve Frontend for Production
+const frontendPath = path.join(__dirname, "frontend", "dist");
+app.use(express.static(frontendPath));
 app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+    res.sendFile(path.join(frontendPath, "index.html"));
 });
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+// Export the app for Vercel
+export default createServer(app);
