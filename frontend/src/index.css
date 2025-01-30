@@ -1,0 +1,116 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+/* CSS for smooth transitions */
+.navbar {
+  transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+.slider-text {
+  animation: fadeIn 1s ease-in-out;
+}
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+.nav-item-light {
+  color: rgb(255, 255, 255); /* Text color when the background is white */
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-item-light:hover {
+  color: #D4AF37; /* Hover color */
+}
+
+.nav-item-dark {
+  color: rgb(0, 0, 0); /* Text color when the background is transparent */
+  font-size: 1.125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-item-dark:hover {
+  color: #D4AF37; /* Hover color */
+}
+
+
+
+.nav-item-light::after, .nav-item-dark::after {
+  content: '';
+  position: absolute;
+  bottom: -4px; /* Adjust for border positioning */
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background-color: #D4AF37; /* Border color */
+  transition: width 0.3s ease-in-out, left 0.3s ease-in-out;
+}
+
+.nav-item-light:hover, .nav-item-dark:hover {
+  color: #D4AF37; /* Change text color on hover */
+}
+
+.nav-item-light:hover::after, .nav-item-dark:hover::after {
+  width: 100%;
+  left: 0;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+body {
+  font-family: 'Merriweather', serif;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
