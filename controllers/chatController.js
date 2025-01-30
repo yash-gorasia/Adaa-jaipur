@@ -64,11 +64,11 @@ function createGeneralPrompt(userMessage, categories, products, storeContext) {
     ).join(', ');
 
     return `${storeContext}
-    User question: "${userMessage}"
-    Available categories: ${categoryInfo}
-    Featured products: ${productHighlights}
-    Common topics: Sizing, delivery times, return policy, current sales, style recommendations
-    Please provide a helpful and concise response focusing on the user's specific query.`;
+User question: "${userMessage}"
+Available categories: ${categoryInfo}
+Featured products: ${productHighlights}
+Common topics: Sizing, delivery times, return policy, current sales, style recommendations
+Please provide a helpful and concise response focusing on the user's specific query.`;
 }
 
 function createCategoryPrompt(userMessage, category, products, storeContext) {
@@ -82,10 +82,10 @@ function createCategoryPrompt(userMessage, category, products, storeContext) {
     }));
 
     return `${storeContext}
-    User question: "${userMessage}"
-    Category: ${category.category_name}
-    Available products: ${JSON.stringify(productInfo)}
-    Please provide specific information about products in this category, including details about materials, styles, and available sizes.`;
+User question: "${userMessage}"
+Category: ${category.category_name}
+Available products: ${JSON.stringify(productInfo)}
+Please provide specific information about products in this category, including details about materials, styles, and available sizes.`;
 }
 
 function createProductPrompt(userMessage, product, storeContext) {
@@ -110,10 +110,10 @@ function createProductPrompt(userMessage, product, storeContext) {
     };
 
     return `${storeContext}
-    User question: "${userMessage}"
-    Product details: ${JSON.stringify(productInfo)}
-    Common product queries: Sizing recommendations, material care, styling tips, availability, delivery time
-    Please provide specific information about this product based on the user's query.`;
+User question: "${userMessage}"
+Product details: ${JSON.stringify(productInfo)}
+Common product queries: Sizing recommendations, material care, styling tips, availability, delivery time
+Please provide specific information about this product based on the user's query.`;
 }
 
 function createOrderPrompt(userMessage, order, orderItems, storeContext) {
@@ -133,10 +133,10 @@ function createOrderPrompt(userMessage, order, orderItems, storeContext) {
     };
 
     return `${storeContext}
-    User question: "${userMessage}"
-    Order details: ${JSON.stringify(orderInfo)}
-    Common order queries: Delivery status, cancellation, modifications, returns
-    Please provide a clear and specific update about this order based on the user's query.`;
+User question: "${userMessage}"
+Order details: ${JSON.stringify(orderInfo)}
+Common order queries: Delivery status, cancellation, modifications, returns
+Please provide a clear and specific update about this order based on the user's query.`;
 }
 
 async function getGeminiResponse(prompt) {
