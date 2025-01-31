@@ -44,9 +44,14 @@ const Login = () => {
       // Store userId and isLogin in localStorage
       localStorage.setItem('userId', data.user._id);
       localStorage.setItem('isLogin', true);
+      localStorage.setItem('isAdmin', data.user.hasOwnProperty('isAdmin') ? data.user.isAdmin : false); // Store admin status
 
-      // Redirect to the home page or dashboard
-      navigate('/');
+      // Redirect based on user role
+      if (data.user.isAdmin) {
+        navigate('/admin'); // Redirect to admin dashboard
+      } else {
+        navigate('/'); // Redirect to home or user dashboard
+      }
     } catch (err) {
       setError(err.message);
     } finally {

@@ -230,9 +230,6 @@ const removeProduct = async (req, res) => {
     try {
         const product = await Product.findByIdAndDelete(req.params.id);
 
-        // Delete associated sizes
-        await Size.deleteMany({ product_id: req.params.id });
-
         res.status(201).json({ message: "Product removed successfully", product });
     } catch (error) {
         console.error(error);
@@ -291,12 +288,8 @@ const fetchProductById = async (req, res) => {
 const fetchAllProducts = async (req, res) => {
     try {
         const products = await Product.find({}).populate("category_id");
-        const productsWithSizes = await Promise.all(products.map(async (product) => {
-            const sizes = await Size.find({ product_id: product._id });
-            return { ...product.toObject(), sizes };
-        }));
 
-        res.json(productsWithSizes);
+        res.json(products);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: "Server Error" });

@@ -2,7 +2,7 @@ import mongoose, { Schema } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
 const cardSchema = new Schema({
-    name:{ type: String,  required: true },
+    name: { type: String, required: true },
     cardNumber: { type: String, required: true }, // Hashed before saving
     expiryDate: { type: String, required: true },
     cvv: { type: String, required: true }, // Hashed before saving
@@ -32,6 +32,7 @@ const userSchema = new Schema({
     cards: { type: [cardSchema], default: [] }, // Store multiple cards
     upiIds: { type: [upiSchema], default: [] }, // Store multiple UPI IDs
     profileCompleted: { type: Boolean, default: false },
+    isAdmin: { type: Boolean, default: false },
 }, {
     timestamps: true,
 });

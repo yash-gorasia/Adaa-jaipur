@@ -59,6 +59,7 @@ const ProfilePage = () => {
           // Clear userId and set isLogin to false in localStorage
           localStorage.removeItem('userId');
           localStorage.setItem('isLogin', false);
+          localStorage.setItem('isAdmin', false);
     
           // Redirect to the login page
           navigate('/login');

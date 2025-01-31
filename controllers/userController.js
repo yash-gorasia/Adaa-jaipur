@@ -81,15 +81,14 @@ const updateUser = async (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
-
+        console.log("Received request body:", req.body);
         // Define allowed fields for update
         const allowedUpdates = ['name', 'age', 'gender', 'phone_number', 'profileCompleted'];
         const isValidUpdate = Object.keys(updates).every(field => allowedUpdates.includes(field));
 
-        if (!isValidUpdate) {
-            return res.status(400).json({ message: 'Invalid updates' });
-        }
-
+        // if (!isValidUpdate) {
+        //     return res.status(400).json({ message: 'Invalid updates' });
+        // }
         // Check if the user exists
         const user = await User.findByIdAndUpdate(id, updates, {
             new: true,
@@ -105,6 +104,7 @@ const updateUser = async (req, res) => {
             user,
         });
     } catch (err) {
+        console.log("error", err);
         console.error("Error updating user:", err.message);
         res.status(500).json({ message: "Server Error" });
     }
@@ -300,5 +300,4 @@ export {
     addUPI,
     removeUPI,
     removeCard
-
 };

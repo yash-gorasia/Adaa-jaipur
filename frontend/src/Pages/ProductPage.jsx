@@ -14,8 +14,7 @@ import FloatingChat from '../Components/Shared/Chatbot';
 
 const ProductPage = () => {
     const location = useLocation();
-    const { productId } = location.state || {};
-    const [product, setProduct] = useState(null);
+    const productId = location.state?.productId || new URLSearchParams(location.search).get("productId"); const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [selectedSize, setSelectedSize] = useState(null);
@@ -40,6 +39,37 @@ const ProductPage = () => {
     const encodedText = encodeURIComponent(text)
     const loggedIn = localStorage.getItem('isLogin');
     const userId = localStorage.getItem('userId');
+    const openShare = (platform) => {
+        const text = "Check out this product!";
+        const productId = "12345";
+        const baseUrl = "https://adaa-jaipur.onrender.com/";
+        const url = `${baseUrl}/product?productId=${encodeURIComponent(productId)}`;
+
+        const shareUrls = {
+            whatsapp: `https://api.whatsapp.com/send?text=${encodeURIComponent(text + " " + url)}`,
+            twitter: `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`,
+            facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
+            linkedin: `https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}&title=${encodeURIComponent(text)}`,
+            telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
+        };
+
+        if (shareUrls[platform]) {
+            window.open(shareUrls[platform], "_blank");
+        } else {
+            console.error("Unsupported platform.");
+        }
+    };
+
+    const shareLink = (text, productId) => {
+        if (navigator.share) {
+            navigator.share({
+                title: text,
+                url: `https://adaa-jaipur.onrender.com/product?productId=${encodeURIComponent(productId)}`,
+            }).catch((error) => console.error("Error sharing:", error));
+        } else {
+            document.getElementById("shareOptions").style.display = "block"; // Show buttons
+        }
+    };
     useEffect(() => {
         const fetchWishlist = async () => {
             try {
@@ -56,32 +86,15 @@ const ProductPage = () => {
             fetchWishlist();
         }
     }, [userId, forceUpdate]); // Add forceUpdate as a dependency
-    const shareLink = () => {
-        const encodedUrl = encodeURIComponent(url);
-        const encodedText = encodeURIComponent(text);
 
-        const shareUrls = {
-
-        };
-
-        if (navigator.share) {
-            // Use Web Share API for mobile devices
-            navigator
-                .share({
-                    title: text,
-                    url: url,
-                })
-                .catch((error) => console.log("Error sharing:", error));
-        } else if (shareUrls[platform]) {
-            // Open the share URL in a new tab for desktop users
-            window.open(shareUrls[platform], "_blank");
-        } else {
-            console.error("Unsupported platform");
-        }
-    };
     const toggleWishlist = async (productId, e) => {
         e.preventDefault();
         e.stopPropagation();
+
+        if (!userId || !loggedIn) {
+            setAlertMessage({ message: 'Please login to add items to wishlist', type: 'error' });
+            return;
+        }
 
         try {
             const isInWishlist = wishlist.some(
@@ -133,7 +146,7 @@ const ProductPage = () => {
     // Add to cart function
     const addToCart = async (productId, e) => {
         e.stopPropagation();
-        if (!loggedIn) {
+        if (!loggedIn || !userId) {
             setAlertMessage({ message: 'Please login to add to cart', type: 'error' });
             return;
         }
@@ -182,33 +195,6 @@ const ProductPage = () => {
         }
     };
 
-    // Add to wishlist function
-    const addToWishlist = async (productId, e) => {
-        e.stopPropagation();
-        if (!loggedIn) {
-            setWishlistMessage('Please login to add to wishlist');
-            setTimeout(() => setWishlistMessage(''), 2000);
-            return;
-        }
-        try {
-            const user_id = userId;
-            const response = await fetch('/api/wishlist/add', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ user_id, product_id: productId }),
-            });
-
-            if (response.ok) {
-                setWishlistMessage('Product added to wishlist');
-                setTimeout(() => setWishlistMessage(''), 2000);
-            } else {
-                setWishlistMessage('Product already in wishlist');
-                setTimeout(() => setWishlistMessage(''), 2000);
-            }
-        } catch (error) {
-            console.error('Error adding to wishlist:', error);
-        }
-    };
 
     // Fetch product data
     useEffect(() => {
@@ -394,7 +380,7 @@ const ProductPage = () => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-3 mb-8">
+                        <div className="flex flex-row gap-3 mb-8">
                             <button
                                 onClick={(e) => addToCart(product._id, e)}
                                 className="flex-1 bg-black text-white h-12 px-6 hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
@@ -419,7 +405,7 @@ const ProductPage = () => {
                                 )}
                             </button>
                             <button
-                                onClick={shareLink}
+                                onClick={() => shareLink("Check out this product!", product._id)}
                                 className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
                             >
                                 <Share2 size={18} />

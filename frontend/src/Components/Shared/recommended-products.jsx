@@ -35,7 +35,7 @@ const RecommendedProducts = ({ categoryId, currentproductid }) => {
   if (loading || filteredProducts.length === 0) return null;
 
   return (
-    <div className="py-8">
+    <div className=" py-4 mb-8">
       {/* Section Title */}
       <div className="text-center mb-6">
         <h2 className="text-3xl text-gray-800 tracking-tight">
@@ -49,7 +49,7 @@ const RecommendedProducts = ({ categoryId, currentproductid }) => {
           <div
             key={product._id}
             className="group hover:shadow-lg cursor-pointer overflow-hidden"
-            onClick={() => navigate('/product/' + product._id, { state: { productId: product._id } })}
+            onClick={() => navigate('/product', { state: { productId: product._id } })}
           >
             {/* Product Image */}
             <div className="relative h-72 w-full overflow-hidden">

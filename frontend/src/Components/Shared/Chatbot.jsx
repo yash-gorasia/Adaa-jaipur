@@ -52,7 +52,7 @@ const FloatingChat = ({ pageType, productId, userId, categoryId, subCategoryId }
 
     // Add welcome message when chat opens
     useEffect(() => {
-        if (isOpen && messages.length === 0) {
+        if (isOpen) {
             const welcomeMessage = {
                 text: "Hello! I'm your Adaa Assistant. How can I help you today?",
                 sender: 'bot'
@@ -72,6 +72,8 @@ const FloatingChat = ({ pageType, productId, userId, categoryId, subCategoryId }
         const messageText = suggestedQuestion || input;
         if (!messageText.trim()) return;
 
+        setShowSuggestions(false); // Hide suggestions permanently after user asks a question
+
         const userMessage = { text: messageText, sender: 'user' };
         setMessages(prev => [...prev, userMessage]);
         setInput('');
@@ -90,9 +92,6 @@ const FloatingChat = ({ pageType, productId, userId, categoryId, subCategoryId }
             });
 
             setMessages(prev => [...prev, { text: response.data.reply, sender: 'bot' }]);
-
-            // Show suggestions again after bot reply for continued conversation
-            setShowSuggestions(true);
         } catch (error) {
             console.error('Error:', error);
             setMessages(prev => [...prev, {

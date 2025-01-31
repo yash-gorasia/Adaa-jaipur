@@ -14,6 +14,6 @@ router.post('/createCategory', createCategory); // Add a new category
 router.put('/updateCategory/:categoryId', updateCategory); // Update category details
 router.delete('/deleteCategory/:categoryId', deleteCategory); // Delete a category
 router.get('/getAllCategories', getAllCategories); // Fetch all categories
- router.get('/readCategory/:id', readCategory); // Fetch a single category by ID
+router.get('/readCategory/:id', readCategory); // Fetch a single category by ID
 
 export default router;

@@ -21,7 +21,6 @@ const ProductList = () => {
   const [forceUpdate, setForceUpdate] = useState(false);
 
   // Filter states
-  const [selectedSizes, setSelectedSizes] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [sortBy, setSortBy] = useState('');
@@ -52,6 +51,11 @@ const ProductList = () => {
   const toggleWishlist = async (productId, e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    if(!loggedIn || !userId) {
+      setAlertMessage({ message: 'Please login to add to wishlist', type: 'error' });
+      return;
+    }
 
     try {
       const isInWishlist = wishlist.some(
@@ -141,13 +145,6 @@ const ProductList = () => {
   useEffect(() => {
     let filtered = [...products];
 
-    // Apply size filter
-    if (selectedSizes.length > 0) {
-      filtered = filtered.filter(product =>
-        product.sizes.some(size => selectedSizes.includes(size.size))
-      );
-    }
-
     // Apply color filter
     if (selectedColors.length > 0) {
       filtered = filtered.filter(product =>
@@ -181,7 +178,7 @@ const ProductList = () => {
     }
 
     setFilteredProducts(filtered);
-  }, [products, selectedSizes, selectedColors, selectedSubcategories, sortBy]);
+  }, [products, selectedColors, selectedSubcategories, sortBy]);
 
   const FilterSection = ({ mobile = false }) => (
     <div className={`space-y-6 ${mobile ? 'p-6' : ''}`}>
@@ -198,31 +195,6 @@ const ProductList = () => {
           <option value="price-high-low">Price: High to Low</option>
           <option value="discount-high-low">Discount: High to Low</option>
         </select>
-      </div>
-
-      {/* Size Filter */}
-      <div>
-        <h3 className="text-sm font-semibold mb-3">Size</h3>
-        <div className="grid grid-cols-2 gap-2">
-          {['Small', 'Medium', 'Large', 'XL'].map(size => (
-            <button
-              key={size}
-              onClick={() => {
-                setSelectedSizes(prev =>
-                  prev.includes(size)
-                    ? prev.filter(s => s !== size)
-                    : [...prev, size]
-                );
-              }}
-              className={`p-2 border text-sm ${selectedSizes.includes(size)
-                  ? 'border-black bg-black text-white'
-                  : 'border-gray-200 hover:border-gray-300'
-                }`}
-            >
-              {size}
-            </button>
-          ))}
-        </div>
       </div>
 
       {/* Color Filter */}

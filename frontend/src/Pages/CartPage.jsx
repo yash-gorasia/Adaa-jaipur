@@ -13,7 +13,6 @@ const CartPage = () => {
     const navigate = useNavigate();
 
     const userId = localStorage.getItem('userId');
-    const loggedIn = localStorage.getItem('isLogin');
 
     // Fetch cart items
     useEffect(() => {

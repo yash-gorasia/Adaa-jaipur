@@ -22,6 +22,10 @@ import PaymentPage from './Pages/Payment';
 import OrderPage from './Pages/OrderPage';
 import SearchList from './Components/Shared/SearchList';
 import MobileSearchPage from './Pages/MobileSearchPage';
+import AdminRoute from './AdminRoute';
+import Admin from './Pages/Admin';
+import ProductDetail from './Pages/AdminPage/ProductDetail';
+import AdminProductForm from './Pages/AdminPage/AddProductForm';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 root.render(
@@ -47,29 +51,43 @@ root.render(
         <Route path="/searchlist" element={<SearchList />} />
         <Route path="/profile" element={
           <ProtectedRoute>
-          <Profile />
+            <Profile />
           </ProtectedRoute>
-          } />
-        
-        <Route 
-                path="/order-summary" 
-                element={
-                    <ProtectedRoute>
-                        <OrderSummaryPage />
-                    </ProtectedRoute>
-                } 
-            />         
-        <Route path='mobilesearch' element={<MobileSearchPage />} />
-              <Route 
-            path="/payment" 
-            element={
-                <ProtectedRoute>
-                    <PaymentPage />
-                </ProtectedRoute>
-            } 
+        } />
+        <Route element={<AdminRoute />}>
+          <Route path="/admin" element={<Admin />} />
+        </Route>
+        <Route
+          path="/order-summary"
+          element={
+            <ProtectedRoute>
+              <OrderSummaryPage />
+            </ProtectedRoute>
+          }
         />
-            
-             </Routes>
+        <Route path='mobilesearch' element={<MobileSearchPage />} />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute>
+              <PaymentPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route path="/admin/product/:id" element={
+          <ProtectedRoute>
+            <ProductDetail />
+          </ProtectedRoute>
+        } />
+        <Route path="admin/products/create" element={
+          <ProtectedRoute>
+            <AdminProductForm />
+          </ProtectedRoute>
+        } />
+
+      </Routes>
+
     </BrowserRouter>
   </React.StrictMode>
 );

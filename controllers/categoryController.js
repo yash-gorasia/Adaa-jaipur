@@ -157,10 +157,7 @@ const deleteCategory = async (req, res) => {
         }
 
         // Check if the category has associated subcategories
-        const subcategories = await Subcategory.find({ category_id: categoryId });
-        if (subcategories.length > 0) {
-            return res.status(400).json({ message: 'Cannot delete category with associated subcategories' });
-        }
+
 
         await category.deleteOne();
         res.json({ message: 'Category deleted successfully' });

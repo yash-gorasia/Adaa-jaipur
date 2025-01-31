@@ -171,46 +171,39 @@ const Wishlist = () => {
         />
       )}
 
-      <div className="max-w-7xl md:mt-[5%] mx-auto px-4 md:px-8 py-8">
-        <h2 className="text-2xl font-semibold mb-4">Your Wishlist</h2>
+
+      <div className="max-w-7xl mt-[6%] mx-auto px-4 md:px-8 py-6">
+        <h2 className="text-lg font-semibold mb-4">Your Wishlist</h2>
 
         {wishlistItems.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {wishlistItems.map((item) => (
-              <div key={item._id} className="group">
-                {/* Product Image */}
-                <div className="relative aspect-[3/4] mb-4 bg-gray-100">
+              <div key={item._id} className="group p-2 bg-gray-50 rounded-lg shadow-sm">
+                {/* Product Image (Reduced Size) */}
+                <div className="relative aspect-[4/5] mb-2 bg-gray-100 rounded-md">
                   <img
                     src={item.product_id.image[0].replace("'\'", "/")}
                     alt={item.product_id.name}
-                    className="absolute inset-0 w-full h-full object-cover object-center"
+                    className="absolute inset-0 w-full h-full object-cover"
                   />
                   {/* Delete Button */}
                   <button
                     onClick={() => removeFromWishlist(item.product_id._id)}
-                    className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+                    className="absolute top-1 right-1 p-1 bg-white rounded-full shadow hover:bg-gray-100"
                   >
-                    <HiOutlineTrash size={18} className="text-gray-700" />
+                    <HiOutlineTrash size={16} className="text-gray-700" />
                   </button>
                 </div>
 
-                {/* Product Info */}
+                {/* Product Info (More Compact) */}
                 <div className="space-y-1">
-                  <h3 className="text-sm font-medium text-gray-900 truncate">
-                    {item.product_id.name}
-                  </h3>
-                  <p className="text-sm text-gray-500 line-clamp-1">
-                    {item.product_id.description}
-                  </p>
-                  <div className="flex items-baseline gap-2">
-                    <p className="text-sm font-medium text-gray-900">
-                      ₹{item.product_id.CurrentPrice}
-                    </p>
+                  <h3 className="text-sm font-medium text-gray-900 truncate">{item.product_id.name}</h3>
+                  <p className="text-xs text-gray-500 line-clamp-1">{item.product_id.description}</p>
+                  <div className="flex items-baseline gap-1">
+                    <p className="text-sm font-semibold text-gray-900">₹{item.product_id.CurrentPrice}</p>
                     {item.product_id.discount > 0 && (
                       <>
-                        <p className="text-xs text-gray-500 line-through">
-                          ₹{item.product_id.MRP}
-                        </p>
+                        <p className="text-xs text-gray-500 line-through">₹{item.product_id.MRP}</p>
                         <p className="text-xs text-green-600">
                           {Math.round(((item.product_id.MRP - item.product_id.CurrentPrice) / item.product_id.MRP) * 100)}% OFF
                         </p>
@@ -219,30 +212,21 @@ const Wishlist = () => {
                   </div>
                 </div>
 
-                {/* Size Selection */}
-                <div className="mt-2">
-                  <label className="text-sm font-medium text-gray-700">Size:</label>
+                {/* Size & Quantity Selection (Compact) */}
+                <div className="flex justify-between items-center mt-2">
                   <select
                     value={selectedSize[item.product_id._id] || ''}
                     onChange={(e) => handleSizeChange(item.product_id._id, e.target.value)}
-                    className="w-full p-2 border rounded-md"
+                    className="w-20 p-1 border rounded text-xs"
                   >
-                    <option value="">Select Size</option>
+                    <option value="">Size</option>
                     {item.product_id.sizes.map((size) => (
-                      <option 
-                        key={size.size} 
-                        value={size.size} 
-                        disabled={size.stock === 0}
-                      >
-                        {size.size} {size.stock === 0 ? '(Out of Stock)' : ''}
+                      <option key={size.size} value={size.size} disabled={size.stock === 0}>
+                        {size.size}
                       </option>
                     ))}
                   </select>
-                </div>
 
-                {/* Quantity Selection */}
-                <div className="mt-2">
-                  <label className="text-sm font-medium text-gray-700">Quantity:</label>
                   <input
                     type="number"
                     min="1"
@@ -253,30 +237,30 @@ const Wishlist = () => {
                     }
                     value={quantity[item.product_id._id] || 1}
                     onChange={(e) => handleQuantityChange(item.product_id._id, parseInt(e.target.value))}
-                    className="w-full p-2 border rounded-md"
+                    className="w-12 p-1 border rounded text-xs text-center"
                   />
                 </div>
 
-                {/* Buttons */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-4">
+                {/* Buttons (Smaller) */}
+                <div className="flex justify-between items-center mt-2">
                   {loggedIn ? (
                     <>
-                      <button 
-                        onClick={() => handleBuyNow(item.product_id)} 
-                        className="py-1 px-2 sm:py-2 sm:px-4 bg-black text-white rounded-md text-xs sm:text-sm"
+                      <button
+                        onClick={() => handleBuyNow(item.product_id)}
+                        className="py-1 px-2 text-xs bg-black text-white rounded-md"
                       >
                         Buy Now
                       </button>
-                      <button 
-                        onClick={(e) => addToCart(item.product_id._id, e)} 
-                        className="py-1 px-2 sm:py-2 sm:px-4 border border-black rounded-md text-xs sm:text-sm"
+                      <button
+                        onClick={(e) => addToCart(item.product_id._id, e)}
+                        className="py-1 px-2 text-xs border border-black rounded-md"
                       >
                         Add to Cart
                       </button>
                     </>
                   ) : (
-                    <p className="text-xs sm:text-sm text-gray-500 text-center">
-                      Please login to add to cart or buy now.
+                    <p className="text-xs text-gray-500 text-center w-full">
+                      Login to buy or add to cart.
                     </p>
                   )}
                 </div>
@@ -284,7 +268,9 @@ const Wishlist = () => {
             ))}
           </div>
         ) : (
-          <p className="text-center text-lg text-gray-500">No items in your wishlist? Don’t worry, dreams take time!</p>
+          <p className="text-center text-sm text-gray-500">
+            No items in your wishlist? Don’t worry, dreams take time!
+          </p>
         )}
       </div>
     </div>

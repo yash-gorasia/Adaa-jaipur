@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
+import Alert from './Alert';
 import { IoIosSearch, IoMdClose } from "react-icons/io";
 import { HiOutlineHeart, HiHeart } from "react-icons/hi";
 
@@ -8,6 +9,7 @@ const SearchComponent = ({ onClose }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [suggestions, setSuggestions] = useState([]);
   const [wishlistItems, setWishlistItems] = useState([]);
+  const [alertMessage, setAlertMessage] = useState(null);
 
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -50,9 +52,15 @@ const SearchComponent = ({ onClose }) => {
   const toggleWishlist = async (productId, e) => {
     e.preventDefault();
     e.stopPropagation();
+
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      setAlertMessage('Please login to add products to wishlist');
+      setTimeout(() => setAlertMessage(null), 3000);
+      return;
+    }
+
     try {
-      const userId = localStorage.getItem('userId');
-      if (!userId) return;
 
       if (wishlistItems.includes(productId)) {
         await fetch('/api/wishlist/remove', {
@@ -72,6 +80,11 @@ const SearchComponent = ({ onClose }) => {
     } catch (error) {
       console.error('Error toggling wishlist:', error);
     }
+  };
+
+  const showAlert = (message, type) => {
+    setAlertMessage({ message, type });
+    setTimeout(() => setAlertMessage(null), 3000);
   };
 
   return (
@@ -104,7 +117,7 @@ const SearchComponent = ({ onClose }) => {
                   <IoMdClose />
                 </button>
               </div>
-              
+
               {suggestions.length > 0 && (
                 <div className="pt-4">
                   <p className="text-sm text-gray-500">{suggestions.length} products found</p>
@@ -178,6 +191,14 @@ const SearchComponent = ({ onClose }) => {
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {/* Alert Message */}
+      {alertMessage && (
+        <div className={`fixed bottom-4 left-4 right-4 p-3 rounded-lg text-center text-white ${alertMessage.type === 'success' ? 'bg-black' : 'bg-red-500'
+          }`}>
+          {alertMessage.message}
         </div>
       )}
     </div>

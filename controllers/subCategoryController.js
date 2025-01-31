@@ -65,15 +65,6 @@ const deleteSubcategory = async (req, res) => {
 
         // Find the subcategory
         const subcategory = await Subcategory.findById(subcategoryId);
-        if (!subcategory) {
-            return res.status(404).json({ message: 'Subcategory not found' });
-        }
-
-        // Check if the subcategory has associated products
-        const products = await Product.find({ subcategory_id: subcategoryId }); // Assuming you have a Product model
-        if (products.length > 0) {
-            return res.status(400).json({ message: 'Cannot delete subcategory with associated products' });
-        }
 
         // Delete the subcategory
         await subcategory.deleteOne();
