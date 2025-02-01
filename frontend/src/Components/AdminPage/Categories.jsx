@@ -101,7 +101,7 @@ const AdminCategoriesPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-6 max-w-6xl">
+    <div className="container mt-8 mx-auto p-6 max-w-6xl">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 md:mb-0">

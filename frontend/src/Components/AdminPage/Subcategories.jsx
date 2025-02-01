@@ -145,7 +145,7 @@ const SubcategoriesManagement = () => {
     });
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
+    <div className="p-8 max-w-6xl mt-8 mx-auto">
       <h1 className="text-3xl font-semibold mb-8">Subcategories Management</h1>
 
       {/* Error Message */}
