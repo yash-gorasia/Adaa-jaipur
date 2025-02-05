@@ -16,6 +16,10 @@ const ProductDetail = () => {
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const fetchProduct = async () => {
       try {
         const res = await fetch(`/api/products/fetchProductById/${id}`);
@@ -31,7 +35,7 @@ const ProductDetail = () => {
         console.error("Error fetching product:", error);
       }
     };
-  
+
     const fetchCategories = async () => {
       try {
         const res = await fetch('/api/categories/getAllCategories');
@@ -110,20 +114,20 @@ const ProductDetail = () => {
           }
         }
       });
-  
+
       newImages.forEach((image) => {
         updatedFormData.append("image", image);
       });
-  
+
       existingImages.forEach((image) => {
         updatedFormData.append("existingImages", image);
       });
-  
+
       const res = await fetch(`/api/products/updateProductDetails/${id}`, {
         method: "PUT",
         body: updatedFormData,
       });
-  
+
       if (res.ok) {
         const updatedProduct = await res.json();
         setProduct(updatedProduct.product);
@@ -139,7 +143,7 @@ const ProductDetail = () => {
       console.error("Error updating product:", error);
     }
   };
-  
+
   const renderCategories = () => {
     return (
       <div className="mb-4">
@@ -169,11 +173,11 @@ const ProductDetail = () => {
 
   const renderSubcategories = () => {
     const filteredSubcategories = subcategories.filter(sub => {
-      if(!sub.category_id) return false;
-      console.log("sub",sub.category_id._id);
+      if (!sub.category_id) return false;
+      console.log("sub", sub.category_id._id);
       return sub.category_id._id === selectedCategory;
-  });      
-  console.log("filteredSubcategories", filteredSubcategories);
+    });
+    console.log("filteredSubcategories", filteredSubcategories);
     return (
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-1">Subcategory</label>
@@ -248,21 +252,20 @@ const ProductDetail = () => {
 
         <div className="bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="border-b border-gray-200">
-          <div className="flex">
-  {["basic", "details", "images", "categories", "stock"].map((tab) => (
-    <button
-      key={tab}
-      onClick={() => setActiveTab(tab)}
-      className={`px-6 py-3 text-sm font-medium ${
-        activeTab === tab
-          ? "text-black border-b-2 border-black"
-          : "text-gray-500 hover:text-gray-700"
-      }`}
-    >
-      {tab.charAt(0).toUpperCase() + tab.slice(1)}
-    </button>
-  ))}
-</div>
+            <div className="flex">
+              {["basic", "details", "images", "categories", "stock"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`px-6 py-3 text-sm font-medium ${activeTab === tab
+                      ? "text-black border-b-2 border-black"
+                      : "text-gray-500 hover:text-gray-700"
+                    }`}
+                >
+                  {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                </button>
+              ))}
+            </div>
           </div>
 
           <div className="p-6">
@@ -273,29 +276,29 @@ const ProductDetail = () => {
               </div>
             )}
             {activeTab === "stock" && (
-  <div className="space-y-6">
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {product.sizes.map((size, index) => (
-        <div key={index} className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            {size.size} Stock
-          </label>
-          {isEditing ? (
-            <input
-              type="number"
-              name={`sizes[${index}].stock`}
-              value={formData.sizes[index].stock || 0}
-              onChange={(e) => handleSizeStockChange(e, index)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
-            />
-          ) : (
-            <p className="text-lg text-gray-900">{size.stock}</p>
-          )}
-        </div>
-      ))}
-    </div>
-  </div>
-)}
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {product.sizes.map((size, index) => (
+                    <div key={index} className="mb-4">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {size.size} Stock
+                      </label>
+                      {isEditing ? (
+                        <input
+                          type="number"
+                          name={`sizes[${index}].stock`}
+                          value={formData.sizes[index].stock || 0}
+                          onChange={(e) => handleSizeStockChange(e, index)}
+                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-transparent"
+                        />
+                      ) : (
+                        <p className="text-lg text-gray-900">{size.stock}</p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {activeTab === "basic" && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {renderField("Name", product.name, "name")}
@@ -379,7 +382,7 @@ const ProductDetail = () => {
                           className="absolute top-2 right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"/>
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                           </svg>
                         </button>
                       )}

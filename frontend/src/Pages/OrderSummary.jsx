@@ -22,6 +22,10 @@ const OrderSummaryPage = () => {
     const userId = localStorage.getItem('userId');
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         const fetchUserDetails = async () => {
             try {
                 const response = await fetch(`/api/users/getuserbyid/${userId}`, {
@@ -100,20 +104,20 @@ const OrderSummaryPage = () => {
 
     const handleProceedToPayment = () => {
         if (!selectedAddress) {
-            setAlertMessage({ 
-                message: 'Please select an address', 
-                type: 'error' 
+            setAlertMessage({
+                message: 'Please select an address',
+                type: 'error'
             });
             return;
         }
 
-        navigate('/payment', { 
-            state: { 
-                cartItems, 
-                totalAmount, 
+        navigate('/payment', {
+            state: {
+                cartItems,
+                totalAmount,
                 selectedAddress,
-                estimatedDeliveryDate 
-            } 
+                estimatedDeliveryDate
+            }
         });
     };
 
@@ -136,7 +140,7 @@ const OrderSummaryPage = () => {
     return (
         <div className="min-h-screen bg-white">
             <Header transparent={false} />
-            
+
             {alertMessage && (
                 <Alert
                     message={alertMessage.message}
@@ -154,9 +158,9 @@ const OrderSummaryPage = () => {
                     {cartItems.map((item) => (
                         <div key={item._id} className="flex justify-between border-b py-4">
                             <div className="flex items-center">
-                                <img 
-                                    src={item.product_id.image[0]} 
-                                    alt={item.product_id.name} 
+                                <img
+                                    src={item.product_id.image[0]}
+                                    alt={item.product_id.name}
                                     className="w-16 h-16 object-cover rounded-lg mr-4"
                                 />
                                 <div>
@@ -186,9 +190,9 @@ const OrderSummaryPage = () => {
                     <h2 className="text-xl font-medium mb-4">Estimated Delivery</h2>
                     <p className="text-gray-600">
                         {estimatedDeliveryDate.toLocaleDateString('en-US', {
-                            weekday: 'long', 
-                            year: 'numeric', 
-                            month: 'long', 
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
                             day: 'numeric'
                         })}
                     </p>
@@ -198,11 +202,10 @@ const OrderSummaryPage = () => {
                 <div className="mb-8">
                     <h2 className="text-xl font-medium mb-4">Select Delivery Address</h2>
                     {userDetails?.addresses?.map((address, index) => (
-                        <div 
+                        <div
                             key={index}
-                            className={`p-4 border rounded-lg mb-2 cursor-pointer ${
-                                selectedAddress === address ? 'border-black' : 'border-gray-200'
-                            }`}
+                            className={`p-4 border rounded-lg mb-2 cursor-pointer ${selectedAddress === address ? 'border-black' : 'border-gray-200'
+                                }`}
                             onClick={() => setSelectedAddress(address)}
                         >
                             <p>{address.street}, {address.city}, {address.state}, {address.postalCode}, {address.country}</p>
@@ -236,12 +239,12 @@ const OrderSummaryPage = () => {
                         onClick={() => setShowAddAddress(!showAddAddress)}
                         className="w-full flex items-center justify-center mt-2 bg-gray-100 text-black py-2 rounded-md"
                     >
-                        <FaPlus className="mr-2" /> 
+                        <FaPlus className="mr-2" />
                         {showAddAddress ? 'Cancel' : 'Add New Address'}
                     </button>
                 </div>
 
-                <button 
+                <button
                     onClick={handleProceedToPayment}
                     className="w-full bg-black text-white h-12 rounded-full hover:bg-gray-900"
                 >

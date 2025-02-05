@@ -100,6 +100,10 @@ const CompleteProfile = () => {
         setTimeout(() => setNotification({ show: false, message: '', type: '' }), 2000);
     };
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-neutral-50 p-4">
             <div className="w-full max-w-md bg-white rounded-xl shadow-md border border-neutral-100 p-8 space-y-6">

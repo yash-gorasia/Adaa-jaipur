@@ -14,6 +14,10 @@ const Wishlist = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const fetchWishlist = async () => {
       try {
         const response = await fetch(`/api/wishlist/${userid}`);

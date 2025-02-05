@@ -10,7 +10,7 @@ import CompactServiceBadge from '../Components/Shared/CompactServiceBadge';
 import Alert from '../Components/Shared/Alert';
 import { HiOutlineHeart, HiHeart } from 'react-icons/hi';
 import FloatingChat from '../Components/Shared/Chatbot';
-
+import Reviews from '../Components/ProductPage/Reviews';
 
 const ProductPage = () => {
     const location = useLocation();
@@ -42,7 +42,7 @@ const ProductPage = () => {
     const openShare = (platform) => {
         const text = "Check out this product!";
         const productId = "12345";
-        const baseUrl = "https://adaa-jaipur.onrender.com/";
+        const baseUrl = "https://example.com";
         const url = `${baseUrl}/product?productId=${encodeURIComponent(productId)}`;
 
         const shareUrls = {
@@ -64,12 +64,13 @@ const ProductPage = () => {
         if (navigator.share) {
             navigator.share({
                 title: text,
-                url: `https://adaa-jaipur.onrender.com/product?productId=${encodeURIComponent(productId)}`,
+                url: `https://example.com/product?productId=${encodeURIComponent(productId)}`,
             }).catch((error) => console.error("Error sharing:", error));
         } else {
             document.getElementById("shareOptions").style.display = "block"; // Show buttons
         }
     };
+
     useEffect(() => {
         const fetchWishlist = async () => {
             try {
@@ -87,14 +88,13 @@ const ProductPage = () => {
         }
     }, [userId, forceUpdate]); // Add forceUpdate as a dependency
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     const toggleWishlist = async (productId, e) => {
         e.preventDefault();
         e.stopPropagation();
-
-        if (!userId || !loggedIn) {
-            setAlertMessage({ message: 'Please login to add items to wishlist', type: 'error' });
-            return;
-        }
 
         try {
             const isInWishlist = wishlist.some(
@@ -146,7 +146,7 @@ const ProductPage = () => {
     // Add to cart function
     const addToCart = async (productId, e) => {
         e.stopPropagation();
-        if (!loggedIn || !userId) {
+        if (!loggedIn) {
             setAlertMessage({ message: 'Please login to add to cart', type: 'error' });
             return;
         }
@@ -195,6 +195,33 @@ const ProductPage = () => {
         }
     };
 
+    // Add to wishlist function
+    const addToWishlist = async (productId, e) => {
+        e.stopPropagation();
+        if (!loggedIn) {
+            setWishlistMessage('Please login to add to wishlist');
+            setTimeout(() => setWishlistMessage(''), 2000);
+            return;
+        }
+        try {
+            const user_id = userId;
+            const response = await fetch('/api/wishlist/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id, product_id: productId }),
+            });
+
+            if (response.ok) {
+                setWishlistMessage('Product added to wishlist');
+                setTimeout(() => setWishlistMessage(''), 2000);
+            } else {
+                setWishlistMessage('Product already in wishlist');
+                setTimeout(() => setWishlistMessage(''), 2000);
+            }
+        } catch (error) {
+            console.error('Error adding to wishlist:', error);
+        }
+    };
 
     // Fetch product data
     useEffect(() => {
@@ -380,7 +407,7 @@ const ProductPage = () => {
                         </div>
 
                         {/* Action Buttons */}
-                        <div className="flex flex-row gap-3 mb-8">
+                        <div className="flex sm:flex-row gap-3 mb-8">
                             <button
                                 onClick={(e) => addToCart(product._id, e)}
                                 className="flex-1 bg-black text-white h-12 px-6 hover:bg-gray-900 transition-colors flex items-center justify-center gap-2"
@@ -388,12 +415,6 @@ const ProductPage = () => {
                                 <ShoppingBag size={18} />
                                 Add to Cart
                             </button>
-                            {/* <button 
-                                className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
-                                onClick={(e) => addToWishlist(product._id, e)}
-                            >
-                                <Heart size={18} />
-                            </button> */}
                             <button
                                 className="flex items-center justify-center h-12 w-12 border border-gray-200 hover:border-gray-300"
                                 onClick={(e) => toggleWishlist(product._id, e)}
@@ -410,6 +431,7 @@ const ProductPage = () => {
                             >
                                 <Share2 size={18} />
                             </button>
+
                         </div>
                         <CompactServiceBadge className='m-auto w-full' />
 
@@ -482,6 +504,8 @@ const ProductPage = () => {
                     onClose={() => setAlertMessage(null)}
                 />
             )}
+            {console.log("product is ", product._id)}
+            <Reviews product_id={product._id} />
         </div>
     );
 };

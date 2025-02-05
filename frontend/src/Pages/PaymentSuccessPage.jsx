@@ -1,7 +1,12 @@
-import React from 'react';
+import React,{ useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
 const PaymentSuccessPage = () => {
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     return (
         <div className="min-h-screen bg-white flex flex-col justify-center items-center">
             <h1 className="text-3xl font-light text-gray-900 mb-4">Payment Successful!</h1>

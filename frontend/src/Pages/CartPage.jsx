@@ -14,6 +14,10 @@ const CartPage = () => {
 
     const userId = localStorage.getItem('userId');
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
     // Fetch cart items
     useEffect(() => {
         const fetchCartItems = async () => {

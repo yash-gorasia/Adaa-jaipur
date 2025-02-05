@@ -12,6 +12,10 @@ const OrderPage = () => {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+
+    useEffect(() => {
         const fetchOrders = async () => {
             try {
                 const response = await fetch(`/api/orders/fetchOrdersByUserId/${userId}`);
@@ -84,7 +88,7 @@ const OrderPage = () => {
         );
         const matchesAmount = order.total_amount.toString().includes(searchLower);
         const matchesStatus = order.order_status.toLowerCase().includes(searchLower);
-        
+
         return hasMatchingProduct || matchesAmount || matchesStatus;
     });
 
@@ -121,7 +125,7 @@ const OrderPage = () => {
                         />
                         <FiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                     </div>
-                    
+
                     <div className="flex items-center space-x-4">
                         <button
                             onClick={() => setIsFilterOpen(!isFilterOpen)}

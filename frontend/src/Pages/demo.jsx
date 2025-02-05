@@ -34,11 +34,13 @@ const ProfilePage = () => {
         country: '',
     });
 
-    // Existing fetch and handler methods remain the same...
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50">
-            <Header transparent={false}/>
+            <Header transparent={false} />
             <div className="container mx-auto px-4 py-8 max-w-4xl">
                 <div className="grid md:grid-cols-3 gap-8">
                     {/* Sidebar Navigation */}
@@ -101,115 +103,115 @@ const ProfilePage = () => {
                                     <FiPlus className="mr-2" /> Add Payment Option
                                 </button>
                             </div>
-                    {isAddingPayment && (
-                        <div className="space-y-4 mb-6">
-                            <div className="flex space-x-4">
-                                <button
-                                    onClick={() => setPaymentType('card')}
-                                    className={`px-4 py-2 rounded-lg ${paymentType === 'card' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
-                                >
-                                    Card
-                                </button>
-                                <button
-                                    onClick={() => setPaymentType('upi')}
-                                    className={`px-4 py-2 rounded-lg ${paymentType === 'upi' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
-                                >
-                                    UPI
-                                </button>
-                            </div>
-
-                            {paymentType === 'card' ? (
-                                <div className="space-y-4">
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Cardholder Name"
-                                        value={newPayment.name}
-                                        onChange={handlePaymentChange}
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                    />
-                                    <input
-                                        type="text"
-                                        name="cardNumber"
-                                        placeholder="Card Number"
-                                        value={newPayment.cardNumber}
-                                        onChange={handlePaymentChange}
-                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                    />
-                                    <div className="flex space-x-2">
-                                        <input
-                                            type="text"
-                                            name="expiryDate"
-                                            placeholder="MM/YY"
-                                            value={newPayment.expiryDate}
-                                            onChange={handlePaymentChange}
-                                            className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                        />
-                                        <input
-                                            type="text"
-                                            name="cvv"
-                                            placeholder="CVV"
-                                            value={newPayment.cvv}
-                                            onChange={handlePaymentChange}
-                                            className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                        />
+                            {isAddingPayment && (
+                                <div className="space-y-4 mb-6">
+                                    <div className="flex space-x-4">
+                                        <button
+                                            onClick={() => setPaymentType('card')}
+                                            className={`px-4 py-2 rounded-lg ${paymentType === 'card' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
+                                        >
+                                            Card
+                                        </button>
+                                        <button
+                                            onClick={() => setPaymentType('upi')}
+                                            className={`px-4 py-2 rounded-lg ${paymentType === 'upi' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
+                                        >
+                                            UPI
+                                        </button>
                                     </div>
+
+                                    {paymentType === 'card' ? (
+                                        <div className="space-y-4">
+                                            <input
+                                                type="text"
+                                                name="name"
+                                                placeholder="Cardholder Name"
+                                                value={newPayment.name}
+                                                onChange={handlePaymentChange}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            />
+                                            <input
+                                                type="text"
+                                                name="cardNumber"
+                                                placeholder="Card Number"
+                                                value={newPayment.cardNumber}
+                                                onChange={handlePaymentChange}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            />
+                                            <div className="flex space-x-2">
+                                                <input
+                                                    type="text"
+                                                    name="expiryDate"
+                                                    placeholder="MM/YY"
+                                                    value={newPayment.expiryDate}
+                                                    onChange={handlePaymentChange}
+                                                    className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    name="cvv"
+                                                    placeholder="CVV"
+                                                    value={newPayment.cvv}
+                                                    onChange={handlePaymentChange}
+                                                    className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                />
+                                            </div>
+                                        </div>
+                                    ) : (
+                                        <input
+                                            type="text"
+                                            name="upiId"
+                                            placeholder="UPI ID"
+                                            value={newPayment.upiId}
+                                            onChange={handlePaymentChange}
+                                            className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                        />
+                                    )}
+
+                                    <button
+                                        onClick={handleAddPayment}
+                                        className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                    >
+                                        Add Payment
+                                    </button>
                                 </div>
-                            ) : (
-                                <input
-                                    type="text"
-                                    name="upiId"
-                                    placeholder="UPI ID"
-                                    value={newPayment.upiId}
-                                    onChange={handlePaymentChange}
-                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                />
                             )}
 
-                            <button
-                                onClick={handleAddPayment}
-                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                            >
-                                Add Payment
-                            </button>
-                        </div>
-                    )}
-
-                    {/* Saved Cards */}
-                    <div className="space-y-4">
-                        <h3 className="text-lg font-semibold text-gray-900">Saved Cards</h3>
-                        {userData.cards.map((card) => (
-                            <div key={card._id} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                                <div>
-                                    <p className="text-gray-700">{card.name}</p>
-                                    <p className="text-gray-700">**** **** **** {card.lastFourDigits}</p>
-                                    <p className="text-sm text-gray-500">Expires: {card.expiryDate}</p>
-                                </div>
-                                <button
-                                    onClick={() => handleRemovePayment('card', card._id)}
-                                    className="text-red-500 hover:text-red-700"
-                                >
-                                    <FiTrash size={16} />
-                                </button>
+                            {/* Saved Cards */}
+                            <div className="space-y-4">
+                                <h3 className="text-lg font-semibold text-gray-900">Saved Cards</h3>
+                                {userData.cards.map((card) => (
+                                    <div key={card._id} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
+                                        <div>
+                                            <p className="text-gray-700">{card.name}</p>
+                                            <p className="text-gray-700">**** **** **** {card.lastFourDigits}</p>
+                                            <p className="text-sm text-gray-500">Expires: {card.expiryDate}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => handleRemovePayment('card', card._id)}
+                                            className="text-red-500 hover:text-red-700"
+                                        >
+                                            <FiTrash size={16} />
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
 
-                    {/* Saved UPI IDs */}
-                    <div className="space-y-4 mt-6">
-                        <h3 className="text-lg font-semibold text-gray-900">Saved UPI IDs</h3>
-                        {userData.upiIds.map((upi) => (
-                            <div key={upi._id} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                                <p className="text-gray-700">{upi.upiId}</p>
-                                <button
-                                    onClick={() => handleRemovePayment('upi', upi._id)}
-                                    className="text-red-500 hover:text-red-700"
-                                >
-                                    <FiTrash size={16} />
-                                </button>
+                            {/* Saved UPI IDs */}
+                            <div className="space-y-4 mt-6">
+                                <h3 className="text-lg font-semibold text-gray-900">Saved UPI IDs</h3>
+                                {userData.upiIds.map((upi) => (
+                                    <div key={upi._id} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
+                                        <p className="text-gray-700">{upi.upiId}</p>
+                                        <button
+                                            onClick={() => handleRemovePayment('upi', upi._id)}
+                                            className="text-red-500 hover:text-red-700"
+                                        >
+                                            <FiTrash size={16} />
+                                        </button>
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                          </div>
                         </div>
                     </div>
                 </div>

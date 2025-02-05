@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import HeaderImage from '../Images/Aboutus_Bg.png'; 
+import HeaderImage from '../Images/Aboutus_Bg.png';
 import Header from '../Components/Shared/Header';
 import FoundersShowcase from '../Components/AboutUsPage/FoundersShowcase';
 
@@ -9,6 +9,10 @@ const AboutUs = () => {
     founder: false,
     mission: false,
   });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -38,7 +42,7 @@ const AboutUs = () => {
     <div className="bg-gradient-to-b from-[#E9F1FF] to-[#F3F6FC]">
       <Header />
       {/* Hero Section */}
-      <motion.div 
+      <motion.div
         className="relative h-[85vh] flex items-center justify-center bg-cover bg-center"
         style={{ backgroundImage: `url(${HeaderImage})` }}
         initial={{ opacity: 0 }}
@@ -47,7 +51,7 @@ const AboutUs = () => {
       >
         <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 text-center text-white px-6">
-          <motion.h1 
+          <motion.h1
             className="text-5xl sm:text-6xl font-extrabold tracking-wide mb-6"
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -55,7 +59,7 @@ const AboutUs = () => {
           >
             Adaa Jaipur
           </motion.h1>
-          <motion.p 
+          <motion.p
             className="text-lg sm:text-xl max-w-3xl mx-auto mb-8 opacity-80"
             initial={{ y: 50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -67,7 +71,7 @@ const AboutUs = () => {
       </motion.div>
 
       {/* Founder Section */}
-      <motion.section 
+      <motion.section
         id="founder"
         className="py-28 bg-[#F0F4F8] text-center"
         initial="hidden"
@@ -78,7 +82,7 @@ const AboutUs = () => {
       </motion.section>
 
       {/* Mission Section */}
-      <motion.section 
+      <motion.section
         id="mission"
         className="py-24 bg-[#A0C4FF] text-center text-white"
         initial="hidden"

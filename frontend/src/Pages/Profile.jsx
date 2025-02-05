@@ -6,11 +6,10 @@ import { FaBoxOpen } from "react-icons/fa";
 import { FiLogOut } from 'react-icons/fi';
 
 
-
 import UPI from "../Images/upi.png";
 import { useNavigate } from 'react-router-dom';
 const ProfilePage = () => {
-    const navigate=useNavigate();
+    const navigate = useNavigate();
     const userId = localStorage.getItem('userId');
     const [userData, setUserData] = useState({
         name: '',
@@ -41,33 +40,50 @@ const ProfilePage = () => {
         country: '',
     });
 
-    const handleorder= async ()=>{
+    const handleorder = async () => {
         navigate('/orders');
     }
+    const [errors, setErrors] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+
+    const validate = () => {
+        const newErrors = {};
+        if (!userData.name.trim()) newErrors.name = 'Name is required';
+        if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(userData.email)) newErrors.email = 'Invalid email';
+        if (!/^[0-9]{10}$/.test(userData.phone_number)) newErrors.phone_number = 'Phone number must be 10 digits';
+        return newErrors;
+    };
+
+
 
     const handleLogout = async () => {
         try {
-          // Call the logout API
-          const response = await fetch('/api/users/logout', {
-            method: 'POST',
-          });
-    
-          if (!response.ok) {
-            throw new Error('Logout failed');
-          }
-    
-          // Clear userId and set isLogin to false in localStorage
-          localStorage.removeItem('userId');
-          localStorage.setItem('isLogin', false);
-          localStorage.setItem('isAdmin', false);
-    
-          // Redirect to the login page
-          navigate('/login');
+            // Call the logout API
+            const response = await fetch('/api/users/logout', {
+                method: 'POST',
+            });
+
+            if (!response.ok) {
+                throw new Error('Logout failed');
+            }
+
+            // Clear userId and set isLogin to false in localStorage
+            localStorage.removeItem('userId');
+            localStorage.setItem('isLogin', false);
+            localStorage.setItem('isAdmin', false); // Store admin status
+
+            // Redirect to the login page
+            navigate('/login');
         } catch (err) {
-          console.error('Error during logout:', err);
-          alert('Logout failed. Please try again.');
+            console.error('Error during logout:', err);
+            alert('Logout failed. Please try again.');
         }
-      };
+    };
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
+    
     // Fetch user data
     useEffect(() => {
         const fetchUserData = async () => {
@@ -84,7 +100,36 @@ const ProfilePage = () => {
         };
         fetchUserData();
     }, [userId]);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+        setErrors({});
+        setIsLoading(true);
 
+        try {
+            const response = await fetch(`/api/users/update/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ ...userData, profileCompleted: true }),
+            });
+            console.log('Response:', response);
+            if (response.ok) {
+                alert('Profile updated successfully!');
+                setTimeout(() => navigate('/home'), 500);
+            } else {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Error updating profile');
+            }
+        } catch (err) {
+            alert(err.message || 'Error updating profile');
+        } finally {
+            setIsLoading(false);
+        }
+    };
     // Handle form change for personal details
     const handleChange = (e) => {
         setUserData({ ...userData, [e.target.name]: e.target.value });
@@ -219,8 +264,8 @@ const ProfilePage = () => {
         }
 
         try {
-            const endpoint = paymentType === 'card' 
-                ? `/api/users/addcard/${userId}` 
+            const endpoint = paymentType === 'card'
+                ? `/api/users/addcard/${userId}`
                 : `/api/users/addupi/${userId}`;
             const response = await fetch(endpoint, {
                 method: 'PUT',
@@ -259,8 +304,8 @@ const ProfilePage = () => {
     // Remove a payment option
     const handleRemovePayment = async (type, id) => {
         try {
-            const endpoint = type === 'card' 
-                ? `/api/users/removecard/${userId}/${id}` 
+            const endpoint = type === 'card'
+                ? `/api/users/removecard/${userId}/${id}`
                 : `/api/users/removeupi/${userId}/${id}`;
             const response = await fetch(endpoint, {
                 method: 'DELETE',
@@ -313,342 +358,37 @@ const ProfilePage = () => {
     return (
         <div className="min-h-screen bg-gray-50">
             <Header transparent={false} />
-            <div className="container mx-auto p-6 max-w-7xl md:mt-[7%] md:mb-[0%] mb-[13%]">
+
+            {/* Logout Button for Mobile */}
+            <button
+                onClick={handleLogout}
+                className="md:hidden fixed bottom-14 right-4 flex items-center gap-2 px-6 py-3 text-white bg-black rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300 z-50"
+            >
+                <FiLogOut className="text-xl" />
+                <span className="text-base font-medium">Logout</span>
+            </button>
+
+            <div className="container mx-auto p-4 md:p-6 max-w-7xl md:mt-[7%] md:mb-[0%] mb-[13%]">
                 <h1 className="text-3xl font-bold text-gray-900 mb-8">My Profile</h1>
 
                 {/* Mobile Accordion */}
-                <div className="md:hidden mb-6">
+                <div className="md:hidden mb-6 space-y-4">
+                    {/* Personal Details Accordion */}
                     <div className="bg-white rounded-lg shadow-sm">
-                        {/* Personal Details Accordion */}
-                        <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleMobileAccordion('personal')}
-                                className="w-full flex items-center justify-between p-4 text-gray-700"
-                            >
-                                <span className="flex items-center">
-                                    <FiUser size={20} className="mr-2" />
-                                    Personal Details
-                                </span>
-                                {mobileAccordion.personal ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
-                            </button>
-                            {mobileAccordion.personal && (
-                                <div className="p-4 bg-gray-50">
-                                    {isEditing ? (
-                                        <form className="space-y-4">
-                                            {['name', 'email', 'phone_number'].map((field) => (
-                                                <div key={field}>
-                                                    <label className="block text-sm font-medium text-gray-600 mb-1">
-                                                        {field.replace('_', ' ')}
-                                                    </label>
-                                                    <input
-                                                        type="text"
-                                                        name={field}
-                                                        value={userData[field]}
-                                                        onChange={handleChange}
-                                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                    />
-                                                </div>
-                                            ))}
-                                            <button
-                                                type="button"
-                                                onClick={() => setIsEditing(false)}
-                                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                                            >
-                                                Save Changes
-                                            </button>
-                                        </form>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            <div className="flex items-center space-x-4">
-                                                <FiUser size={24} className="text-gray-500" />
-                                                <p className="text-gray-700">{userData.name}</p>
-                                            </div>
-                                            <div className="flex items-center space-x-4">
-                                                <FiMail size={24} className="text-gray-500" />
-                                                <p className="text-gray-700">{userData.email}</p>
-                                            </div>
-                                            <div className="flex items-center space-x-4">
-                                                <FiPhone size={24} className="text-gray-500" />
-                                                <p className="text-gray-700">{userData.phone_number}</p>
-                                            </div>
-                                            <button
-                                                onClick={() => setIsEditing(true)}
-                                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                                            >
-                                                Edit Details
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Addresses Accordion */}
-                        <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleMobileAccordion('addresses')}
-                                className="w-full flex items-center justify-between p-4 text-gray-700"
-                            >
-                                <span className="flex items-center">
-                                    <FiMapPin size={20} className="mr-2" />
-                                    Addresses
-                                </span>
-                                {mobileAccordion.addresses ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
-                            </button>
-                            {mobileAccordion.addresses && (
-                                <div className="p-4 bg-gray-50">
-                                    {isEditingAddress ? (
-                                        <div className="space-y-4">
-                                            {['street', 'city', 'state', 'postalCode', 'country'].map((field) => (
-                                                <input
-                                                    key={field}
-                                                    type="text"
-                                                    name={field}
-                                                    placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
-                                                    value={newAddress[field]}
-                                                    onChange={handleAddressChange}
-                                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                />
-                                            ))}
-                                            <button
-                                                onClick={editingAddressIndex !== null ? handleSaveEditedAddress : handleAddAddress}
-                                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                                            >
-                                                {editingAddressIndex !== null ? 'Save Address' : 'Add Address'}
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {userData.addresses.map((address, index) => (
-                                                <div key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                                                    <div>
-                                                        <p className="text-gray-700">{address.street}, {address.city}, {address.state}, {address.postalCode}, {address.country}</p>
-                                                    </div>
-                                                    <div className="flex space-x-2">
-                                                        <button
-                                                            onClick={() => handleEditAddress(index)}
-                                                            className="text-blue-500 hover:text-blue-700"
-                                                        >
-                                                            <FiEdit size={16} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleRemoveAddress(index)}
-                                                            className="text-red-500 hover:text-red-700"
-                                                        >
-                                                            <FiTrash size={16} />
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            ))}
-                                            <button
-                                                onClick={() => setIsEditingAddress(true)}
-                                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                                            >
-                                                Add New Address
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-
-                        {/* Payment Options Accordion */}
-                        <div className="border-b border-gray-200">
-                            <button
-                                onClick={() => toggleMobileAccordion('payments')}
-                                className="w-full flex items-center justify-between p-4 text-gray-700"
-                            >
-                                <span className="flex items-center">
-                                    <FiCreditCard size={20} className="mr-2" />
-                                    Payment Options
-                                </span>
-                                {mobileAccordion.payments ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
-                            </button>
-                            {mobileAccordion.payments && (
-                                <div className="p-4 bg-gray-50">
-                                    {isAddingPayment ? (
-                                        <div className="space-y-4">
-                                            <div className="flex space-x-4">
-                                                <button
-                                                    onClick={() => setPaymentType('card')}
-                                                    className={`px-4 py-2 rounded-lg ${paymentType === 'card' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
-                                                >
-                                                    Card
-                                                </button>
-                                                <button
-                                                    onClick={() => setPaymentType('upi')}
-                                                    className={`px-4 py-2 rounded-lg ${paymentType === 'upi' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
-                                                >
-                                                    UPI
-                                                </button>
-                                            </div>
-                                            {paymentType === 'card' ? (
-                                                <div className="space-y-4">
-                                                    <input
-                                                        type="text"
-                                                        name="name"
-                                                        placeholder="Cardholder Name"
-                                                        value={newPayment.name}
-                                                        onChange={handlePaymentChange}
-                                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                    />
-                                                    <input
-                                                        type="text"
-                                                        name="cardNumber"
-                                                        placeholder="Card Number"
-                                                        value={newPayment.cardNumber}
-                                                        onChange={handlePaymentChange}
-                                                        className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                    />
-                                                    <div className="flex space-x-2">
-                                                        <input
-                                                            type="text"
-                                                            name="expiryDate"
-                                                            placeholder="MM/YY"
-                                                            value={newPayment.expiryDate}
-                                                            onChange={handlePaymentChange}
-                                                            className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                        />
-                                                        <input
-                                                            type="text"
-                                                            name="cvv"
-                                                            placeholder="CVV"
-                                                            value={newPayment.cvv}
-                                                            onChange={handlePaymentChange}
-                                                            className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                        />
-                                                    </div>
-                                                </div>
-                                            ) : (
-                                                <input
-                                                    type="text"
-                                                    name="upiId"
-                                                    placeholder="UPI ID"
-                                                    value={newPayment.upiId}
-                                                    onChange={handlePaymentChange}
-                                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
-                                                />
-                                            )}
-                                            <button
-                                                onClick={handleAddPayment}
-                                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                                            >
-                                                Add Payment
-                                            </button>
-                                        </div>
-                                    ) : (
-                                        <div className="space-y-4">
-                                            {userData.cards.map((card, index) => (
-                                                <div key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                                                    <div>
-                                                        <p className="text-gray-700">{card.name}</p>
-                                                        <p className="text-gray-700">**** **** **** {card.lastFourDigits}</p>
-                                                        <p className="text-sm text-gray-500">Expires: {card.expiryDate}</p>
-                                                        <img
-                                                            src={CARD}
-                                                            alt={getCardSymbol(card.cardNumber)}
-                                                            className="w-8 h-8 mt-2"
-                                                        />
-                                                    </div>
-                                                    <button
-                                                        onClick={() => handleRemovePayment('card', card._id)}
-                                                        className="text-red-500 hover:text-red-700"
-                                                    >
-                                                        <FiTrash size={16} />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            {userData.upiIds.map((upi, index) => (
-                                                <div key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
-                                                    <div>
-                                                        <p className="text-gray-700">{upi.upiId}</p>
-                                                        <img
-                                                            src={UPI}
-                                                            alt="UPI"
-                                                            className="w-8 h-8 mt-2"
-                                                        />
-                                                    </div>
-                                                    <button
-                                                        onClick={() => handleRemovePayment('upi', upi._id)}
-                                                        className="text-red-500 hover:text-red-700"
-                                                    >
-                                                        <FiTrash size={16} />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            <button
-                                                onClick={() => setIsAddingPayment(true)}
-                                                className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
-                                            >
-                                                Add Payment Option
-                                            </button>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-
-                {/* Main Content for Desktop */}
-                <div className="hidden md:flex">
-                    {/* Desktop Sidebar */}
-                    <div className="w-64 lg:w-72 mr-6">
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <nav>
-                                <ul className="space-y-2">
-                                    <li>
-                                        <button
-                                            onClick={() => setActiveSection('personal')}
-                                            className={`w-full flex items-center space-x-3 p-3 ${
-                                                activeSection === 'personal'
-                                                    ? 'bg-black text-white'
-                                                    : 'text-gray-700 hover:bg-gray-100'
-                                            }`}
-                                        >
-                                            <FiUser size={20} />
-                                            <span>Personal Details</span>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            onClick={() => setActiveSection('addresses')}
-                                            className={`w-full flex items-center space-x-3 p-3 ${
-                                                activeSection === 'addresses'
-                                                    ? 'bg-black text-white'
-                                                    : 'text-gray-700 hover:bg-gray-100'
-                                            }`}
-                                        >
-                                            <FiMapPin size={20} />
-                                            <span>Addresses</span>
-                                        </button>
-                                    </li>
-                                    <li>
-                                        <button
-                                            onClick={() => setActiveSection('payments')}
-                                            className={`w-full flex items-center space-x-3 p-3 ${
-                                                activeSection === 'payments'
-                                                    ? 'bg-black text-white'
-                                                    : 'text-gray-700 hover:bg-gray-100'
-                                            }`}
-                                        >
-                                            <FiCreditCard size={20} />
-                                            <span>Payment Options</span>
-                                        </button>
-                                    </li>
-                                </ul>
-                            </nav>
-                        </div>
-                    </div>
-
-                    {/* Content Area */}
-                    <div className="flex-1">
-                        {/* Personal Details Section */}
-                        {activeSection === 'personal' && (
-                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Personal Details</h2>
+                        <button
+                            onClick={() => toggleMobileAccordion('personal')}
+                            className="w-full flex items-center justify-between p-4 text-gray-700"
+                        >
+                            <span className="flex items-center">
+                                <FiUser size={20} className="mr-2" />
+                                Personal Details
+                            </span>
+                            {mobileAccordion.personal ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
+                        </button>
+                        {mobileAccordion.personal && (
+                            <div className="p-4 bg-gray-50">
                                 {isEditing ? (
-                                    <form className="space-y-4">
+                                    <form onSubmit={handleSubmit} className="space-y-4">
                                         {['name', 'email', 'phone_number'].map((field) => (
                                             <div key={field}>
                                                 <label className="block text-sm font-medium text-gray-600 mb-1">
@@ -657,18 +397,20 @@ const ProfilePage = () => {
                                                 <input
                                                     type="text"
                                                     name={field}
-                                                    value={userData[field]}
+                                                    value={userData[field] || ''}
                                                     onChange={handleChange}
-                                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-black ${errors[field] ? 'border-red-500' : 'border-gray-200'
+                                                        }`}
                                                 />
+                                                {errors[field] && <p className="text-red-500 text-sm">{errors[field]}</p>}
                                             </div>
                                         ))}
                                         <button
-                                            type="button"
-                                            onClick={() => setIsEditing(false)}
-                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                            type="submit"
+                                            disabled={isLoading}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
                                         >
-                                            Save Changes
+                                            {isLoading ? 'Saving...' : 'Save Changes'}
                                         </button>
                                     </form>
                                 ) : (
@@ -695,11 +437,22 @@ const ProfilePage = () => {
                                 )}
                             </div>
                         )}
+                    </div>
 
-                        {/* Addresses Section */}
-                        {activeSection === 'addresses' && (
-                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Addresses</h2>
+                    {/* Addresses Accordion */}
+                    <div className="bg-white rounded-lg shadow-sm">
+                        <button
+                            onClick={() => toggleMobileAccordion('addresses')}
+                            className="w-full flex items-center justify-between p-4 text-gray-700"
+                        >
+                            <span className="flex items-center">
+                                <FiMapPin size={20} className="mr-2" />
+                                Addresses
+                            </span>
+                            {mobileAccordion.addresses ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
+                        </button>
+                        {mobileAccordion.addresses && (
+                            <div className="p-4 bg-gray-50">
                                 {isEditingAddress ? (
                                     <div className="space-y-4">
                                         {['street', 'city', 'state', 'postalCode', 'country'].map((field) => (
@@ -723,9 +476,14 @@ const ProfilePage = () => {
                                 ) : (
                                     <div className="space-y-4">
                                         {userData.addresses.map((address, index) => (
-                                            <div key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                            >
                                                 <div>
-                                                    <p className="text-gray-700">{address.street}, {address.city}, {address.state}, {address.postalCode}, {address.country}</p>
+                                                    <p className="text-gray-700">
+                                                        {address.street}, {address.city}, {address.state}, {address.postalCode}, {address.country}
+                                                    </p>
                                                 </div>
                                                 <div className="flex space-x-2">
                                                     <button
@@ -753,23 +511,36 @@ const ProfilePage = () => {
                                 )}
                             </div>
                         )}
+                    </div>
 
-                        {/* Payment Options Section */}
-                        {activeSection === 'payments' && (
-                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Options</h2>
+                    {/* Payment Options Accordion */}
+                    <div className="bg-white rounded-lg shadow-sm">
+                        <button
+                            onClick={() => toggleMobileAccordion('payments')}
+                            className="w-full flex items-center justify-between p-4 text-gray-700"
+                        >
+                            <span className="flex items-center">
+                                <FiCreditCard size={20} className="mr-2" />
+                                Payment Options
+                            </span>
+                            {mobileAccordion.payments ? <FiChevronUp size={20} /> : <FiChevronDown size={20} />}
+                        </button>
+                        {mobileAccordion.payments && (
+                            <div className="p-4 bg-gray-50">
                                 {isAddingPayment ? (
                                     <div className="space-y-4">
                                         <div className="flex space-x-4">
                                             <button
                                                 onClick={() => setPaymentType('card')}
-                                                className={`px-4 py-2 rounded-lg ${paymentType === 'card' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
+                                                className={`px-4 py-2 rounded-lg ${paymentType === 'card' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+                                                    }`}
                                             >
                                                 Card
                                             </button>
                                             <button
                                                 onClick={() => setPaymentType('upi')}
-                                                className={`px-4 py-2 rounded-lg ${paymentType === 'upi' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'}`}
+                                                className={`px-4 py-2 rounded-lg ${paymentType === 'upi' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+                                                    }`}
                                             >
                                                 UPI
                                             </button>
@@ -831,7 +602,10 @@ const ProfilePage = () => {
                                 ) : (
                                     <div className="space-y-4">
                                         {userData.cards.map((card, index) => (
-                                            <div key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                            >
                                                 <div>
                                                     <p className="text-gray-700">{card.name}</p>
                                                     <p className="text-gray-700">**** **** **** {card.lastFourDigits}</p>
@@ -851,14 +625,13 @@ const ProfilePage = () => {
                                             </div>
                                         ))}
                                         {userData.upiIds.map((upi, index) => (
-                                            <div key={index} className="flex justify-between items-center p-4 border border-gray-200 rounded-lg">
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                            >
                                                 <div>
                                                     <p className="text-gray-700">{upi.upiId}</p>
-                                                    <img
-                                                        src={UPI}
-                                                        alt="UPI"
-                                                        className="w-8 h-8 mt-2"
-                                                    />
+                                                    <img src={UPI} alt="UPI" className="w-8 h-8 mt-2" />
                                                 </div>
                                                 <button
                                                     onClick={() => handleRemovePayment('upi', upi._id)}
@@ -878,21 +651,323 @@ const ProfilePage = () => {
                                 )}
                             </div>
                         )}
-<div className="flex items-center gap-4 md:gap-6 lg:gap-8">
-      <button onClick={handleorder} className="flex items-center gap-2 px-6 py-3 text-white bg-gray-900 rounded-lg shadow-md hover:bg-gray-700 transition-all duration-300">
-        <FaBoxOpen className="text-xl" />
-        <span className="text-base font-medium">Orders</span>
-      </button>
-
-      <button
-        onClick={handleLogout}
-        className="flex items-center gap-2 px-6 py-3 text-white bg-black rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
-      >
-        <FiLogOut className="text-xl" />
-        <span className="text-base font-medium">Logout</span>
-      </button>
-    </div>
                     </div>
+                </div>
+
+                {/* Main Content for Desktop */}
+                <div className="hidden md:flex">
+                    {/* Desktop Sidebar */}
+                    <div className="w-64 lg:w-72 mr-6">
+                        <div className="bg-white rounded-lg shadow-sm p-6">
+                            <nav>
+                                <ul className="space-y-2">
+                                    <li>
+                                        <button
+                                            onClick={() => setActiveSection('personal')}
+                                            className={`w-full flex items-center space-x-3 p-3 ${activeSection === 'personal'
+                                                ? 'bg-black text-white'
+                                                : 'text-gray-700 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            <FiUser size={20} />
+                                            <span>Personal Details</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => setActiveSection('addresses')}
+                                            className={`w-full flex items-center space-x-3 p-3 ${activeSection === 'addresses'
+                                                ? 'bg-black text-white'
+                                                : 'text-gray-700 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            <FiMapPin size={20} />
+                                            <span>Addresses</span>
+                                        </button>
+                                    </li>
+                                    <li>
+                                        <button
+                                            onClick={() => setActiveSection('payments')}
+                                            className={`w-full flex items-center space-x-3 p-3 ${activeSection === 'payments'
+                                                ? 'bg-black text-white'
+                                                : 'text-gray-700 hover:bg-gray-100'
+                                                }`}
+                                        >
+                                            <FiCreditCard size={20} />
+                                            <span>Payment Options</span>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+
+                    {/* Content Area */}
+                    <div className="flex-1">
+                        {/* Personal Details Section */}
+                        {activeSection === 'personal' && (
+                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Personal Details</h2>
+                                {isEditing ? (
+                                    <form className="space-y-4">
+                                        {['name', 'phone_number'].map((field) => (
+                                            <div key={field}>
+                                                <label className="block text-sm font-medium text-gray-600 mb-1">
+                                                    {field.replace('_', ' ')}
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    name={field}
+                                                    value={userData[field]}
+                                                    onChange={handleChange}
+                                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                />
+                                            </div>
+                                        ))}
+                                        <button
+                                            type="button"
+                                            onClick={(e) => handleSubmit(e)}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                        >
+                                            Save Changes
+                                        </button>
+                                    </form>
+                                ) : (
+                                    <div className="space-y-4">
+                                        <div className="flex items-center space-x-4">
+                                            <FiUser size={24} className="text-gray-500" />
+                                            <p className="text-gray-700">{userData.name}</p>
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <FiMail size={24} className="text-gray-500" />
+                                            <p className="text-gray-700">{userData.email}</p>
+                                        </div>
+                                        <div className="flex items-center space-x-4">
+                                            <FiPhone size={24} className="text-gray-500" />
+                                            <p className="text-gray-700">{userData.phone_number}</p>
+                                        </div>
+                                        <button
+                                            onClick={() => setIsEditing(true)}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                        >
+                                            Edit Details
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Addresses Section */}
+                        {activeSection === 'addresses' && (
+                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Addresses</h2>
+                                {isEditingAddress ? (
+                                    <div className="space-y-4">
+                                        {['street', 'city', 'state', 'postalCode', 'country'].map((field) => (
+                                            <input
+                                                key={field}
+                                                type="text"
+                                                name={field}
+                                                placeholder={field.charAt(0).toUpperCase() + field.slice(1)}
+                                                value={newAddress[field]}
+                                                onChange={handleAddressChange}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            />
+                                        ))}
+                                        <button
+                                            onClick={editingAddressIndex !== null ? handleSaveEditedAddress : handleAddAddress}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                        >
+                                            {editingAddressIndex !== null ? 'Save Address' : 'Add Address'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {userData.addresses.map((address, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                            >
+                                                <div>
+                                                    <p className="text-gray-700">
+                                                        {address.street}, {address.city}, {address.state}, {address.postalCode}, {address.country}
+                                                    </p>
+                                                </div>
+                                                <div className="flex space-x-2">
+                                                    <button
+                                                        onClick={() => handleEditAddress(index)}
+                                                        className="text-blue-500 hover:text-blue-700"
+                                                    >
+                                                        <FiEdit size={16} />
+                                                    </button>
+                                                    <button
+                                                        onClick={() => handleRemoveAddress(index)}
+                                                        className="text-red-500 hover:text-red-700"
+                                                    >
+                                                        <FiTrash size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => setIsEditingAddress(true)}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                        >
+                                            Add New Address
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Payment Options Section */}
+                        {activeSection === 'payments' && (
+                            <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
+                                <h2 className="text-xl font-semibold text-gray-900 mb-6">Payment Options</h2>
+                                {isAddingPayment ? (
+                                    <div className="space-y-4">
+                                        <div className="flex space-x-4">
+                                            <button
+                                                onClick={() => setPaymentType('card')}
+                                                className={`px-4 py-2 rounded-lg ${paymentType === 'card' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+                                                    }`}
+                                            >
+                                                Card
+                                            </button>
+                                            <button
+                                                onClick={() => setPaymentType('upi')}
+                                                className={`px-4 py-2 rounded-lg ${paymentType === 'upi' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
+                                                    }`}
+                                            >
+                                                UPI
+                                            </button>
+                                        </div>
+                                        {paymentType === 'card' ? (
+                                            <div className="space-y-4">
+                                                <input
+                                                    type="text"
+                                                    name="name"
+                                                    placeholder="Cardholder Name"
+                                                    value={newPayment.name}
+                                                    onChange={handlePaymentChange}
+                                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                />
+                                                <input
+                                                    type="text"
+                                                    name="cardNumber"
+                                                    placeholder="Card Number"
+                                                    value={newPayment.cardNumber}
+                                                    onChange={handlePaymentChange}
+                                                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                />
+                                                <div className="flex space-x-2">
+                                                    <input
+                                                        type="text"
+                                                        name="expiryDate"
+                                                        placeholder="MM/YY"
+                                                        value={newPayment.expiryDate}
+                                                        onChange={handlePaymentChange}
+                                                        className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        name="cvv"
+                                                        placeholder="CVV"
+                                                        value={newPayment.cvv}
+                                                        onChange={handlePaymentChange}
+                                                        className="w-1/2 px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                                    />
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <input
+                                                type="text"
+                                                name="upiId"
+                                                placeholder="UPI ID"
+                                                value={newPayment.upiId}
+                                                onChange={handlePaymentChange}
+                                                className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:border-black"
+                                            />
+                                        )}
+                                        <button
+                                            onClick={handleAddPayment}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                        >
+                                            Add Payment
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-4">
+                                        {userData.cards.map((card, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                            >
+                                                <div>
+                                                    <p className="text-gray-700">{card.name}</p>
+                                                    <p className="text-gray-700">**** **** **** {card.lastFourDigits}</p>
+                                                    <p className="text-sm text-gray-500">Expires: {card.expiryDate}</p>
+                                                    <img
+                                                        src={CARD}
+                                                        alt={getCardSymbol(card.cardNumber)}
+                                                        className="w-8 h-8 mt-2"
+                                                    />
+                                                </div>
+                                                <button
+                                                    onClick={() => handleRemovePayment('card', card._id)}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    <FiTrash size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        {userData.upiIds.map((upi, index) => (
+                                            <div
+                                                key={index}
+                                                className="flex justify-between items-center p-4 border border-gray-200 rounded-lg"
+                                            >
+                                                <div>
+                                                    <p className="text-gray-700">{upi.upiId}</p>
+                                                    <img src={UPI} alt="UPI" className="w-8 h-8 mt-2" />
+                                                </div>
+                                                <button
+                                                    onClick={() => handleRemovePayment('upi', upi._id)}
+                                                    className="text-red-500 hover:text-red-700"
+                                                >
+                                                    <FiTrash size={16} />
+                                                </button>
+                                            </div>
+                                        ))}
+                                        <button
+                                            onClick={() => setIsAddingPayment(true)}
+                                            className="px-4 py-2 bg-black text-white rounded-lg hover:bg-gray-800"
+                                        >
+                                            Add Payment Option
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Orders and Logout Buttons */}
+                <div className="flex items-center gap-4 md:gap-6 lg:gap-8 mt-8">
+                    <button
+                        onClick={handleorder}
+                        className="flex items-center gap-2 px-6 py-3 text-white bg-gray-900 rounded-lg shadow-md hover:bg-gray-700 transition-all duration-300"
+                    >
+                        <FaBoxOpen className="text-xl" />
+                        <span className="text-base font-medium">Orders</span>
+                    </button>
+
+                    <button
+                        onClick={handleLogout}
+                        className="hidden md:flex items-center gap-2 px-6 py-3 text-white bg-black rounded-lg shadow-md hover:bg-gray-800 transition-all duration-300"
+                    >
+                        <FiLogOut className="text-xl" />
+                        <span className="text-base font-medium">Logout</span>
+                    </button>
                 </div>
             </div>
         </div>

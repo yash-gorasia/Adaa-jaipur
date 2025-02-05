@@ -53,14 +53,16 @@ const PaymentPage = () => {
         }
     };
 
-
+    useEffect(() => {
+        window.scrollTo(0, 0);
+    }, []);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
             try {
                 const response = await fetch(`/api/users/getuserbyid/${userId}`);
                 if (!response.ok) throw new Error('Failed to fetch user details');
-                
+
                 const userData = await response.json();
                 setUserDetails(userData.user);
                 if (userData.user.savedCards?.length > 0) {
@@ -147,7 +149,7 @@ const PaymentPage = () => {
                 paymentmode: 'braintree',
                 paymentDetails
             };
-            console.log("orderPayload",orderPayload);
+            console.log("orderPayload", orderPayload);
             const orderResponse = await fetch('/api/orders/createOrder', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -212,10 +214,10 @@ const PaymentPage = () => {
             });
         } catch (error) {
             console.error('Order placement error:', error);
-            const errorMessage = error.message.includes('Do Not Honor') 
+            const errorMessage = error.message.includes('Do Not Honor')
                 ? 'Your card was declined. Please try a different card.'
                 : error.message;
-            
+
             setAlertMessage({
                 message: errorMessage,
                 type: 'error'
@@ -275,9 +277,8 @@ const PaymentPage = () => {
                             {savedCards.map((card) => (
                                 <div
                                     key={card._id}
-                                    className={`p-4 border rounded-lg flex justify-between items-center cursor-pointer ${
-                                        selectedCard?._id === card._id ? 'border-black' : 'border-gray-200'
-                                    }`}
+                                    className={`p-4 border rounded-lg flex justify-between items-center cursor-pointer ${selectedCard?._id === card._id ? 'border-black' : 'border-gray-200'
+                                        }`}
                                     onClick={() => {
                                         setSelectedCard(card);
                                         setShowNewCardForm(false);

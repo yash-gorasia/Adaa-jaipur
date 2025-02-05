@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 const AddProductForm = () => {
   const navigate = useNavigate();
-  
+
   const [product, setProduct] = useState({
     name: "",
     styleCode: "",
@@ -34,6 +34,10 @@ const AddProductForm = () => {
   const [previewUrls, setPreviewUrls] = useState([]);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     fetch("/api/categories/getAllCategories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
@@ -54,7 +58,7 @@ const AddProductForm = () => {
     setProduct((prev) => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value,
-      CurrentPrice: name === "MRP" || name === "discount" ? 
+      CurrentPrice: name === "MRP" || name === "discount" ?
         calculateCurrentPrice(
           name === "MRP" ? value : prev.MRP,
           name === "discount" ? value : prev.discount
@@ -73,9 +77,9 @@ const AddProductForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     const formData = new FormData();
-    
+
     // Append all product data
     Object.keys(product).forEach(key => {
       if (key === 'sizes') {

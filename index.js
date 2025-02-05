@@ -10,59 +10,44 @@ import orderRoutes from "./routes/orderRoute.js";
 import orderItemRoutes from "./routes/orderItemRoute.js";
 import cartRoutes from "./routes/cartRoute.js";
 import wishlistRoutes from "./routes/wishlistRoute.js";
+// import chatRoute from "./routes/chatRoute.js";
 import uploadRoutes from "./routes/uploadRoute.js";
-import paymentRoute from "./routes/paymentRoute.js";
-import chatRoute from "./routes/chatRoute.js";
 import path from "path";
-import { fileURLToPath } from "url";
-
+import chatRoute from "./routes/chatRoute.js";
+import reviewRoutes from "./routes/reviewRoute.js";
+import paymentRoute from "./routes/paymentRoute.js";
 dotenv.config();
 
 const port = process.env.PORT || 8000;
-
-// Fix __dirname issue in ES Module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 connectDB();
 
 const app = express();
 
-app.use(
-    cors({
-        origin: "*", // Allow request from frontend
-        credentials: true,
-    })
-);
+app.use(cors({
+    origin: "*", // Allow request from frontend
+    credentials: true
+}));
 
 app.use(express.json());
-
+app.use('/api/payment', paymentRoute);
 // Routes
-app.use("/api/payment", paymentRoute);
-app.use("/api/users", userRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/categories", categoryRoutes);
-app.use("/api/subcategories", subcategoryRoutes);
-app.use("/api/orders", orderRoutes);
-app.use("/api/orderItems", orderItemRoutes);
-app.use("/api/cart", cartRoutes);
-app.use("/api/wishlist", wishlistRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/subcategories', subcategoryRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/orderItems', orderItemRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/wishlist', wishlistRoutes);
+app.use('/api/reviews', reviewRoutes);
 
-// Upload Route
 app.use("/api/upload", uploadRoutes);
-
-// Chatbot Route
 app.use('/api/chatbot', chatRoute);
 
-
-
-// Serve frontend
-app.use(express.static(path.join(__dirname, "frontend", "dist")));
-
-app.get("*", (req, res) => {
-    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-});
+const __dirname = path.resolve()
+app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
 
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+    console.log(`server is running on ${process.env.PORT}`);
+})

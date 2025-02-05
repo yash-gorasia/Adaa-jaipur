@@ -1,13 +1,17 @@
-import React from 'react';
+import React,{ useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../Components/Shared/Header';
 
 const CheckoutPage = () => {
     const location = useLocation();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
     
     // Redirect to appropriate pages based on login and cart status
-    React.useEffect(() => {
+    useEffect(() => {
         const isLogin = localStorage.getItem('isLogin') === 'true';
         const cartItems = location.state?.cartItems;
 

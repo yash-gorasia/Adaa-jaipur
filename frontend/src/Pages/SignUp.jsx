@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoMail, IoLockClosed, IoEye, IoEyeOff } from 'react-icons/io5';
 import { ImSpinner8 } from 'react-icons/im';
 import { Link, useNavigate } from 'react-router-dom';
@@ -41,7 +41,7 @@ const SignUp = () => {
         localStorage.setItem('userId', data.user._id); // Store userId
         localStorage.setItem('token', data.token); // Store JWT token
         localStorage.setItem('isLogin', 'true'); // Set isLogin to true
-        
+
         console.log('User ID:', data.user._id);
         console.log('JWT Token:', data.token);
 
@@ -67,6 +67,10 @@ const SignUp = () => {
     setShowModal(false);
     navigate('/home');
   };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div>

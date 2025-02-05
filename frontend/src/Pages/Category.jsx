@@ -10,6 +10,10 @@ const CategoryGrid = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
+  useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await fetch('/api/categories/getAllCategories');
@@ -71,7 +75,7 @@ const CategoryGrid = () => {
               state={{ categoryId: category._id }}
               className="block group"
             >
-              <div 
+              <div
                 className="bg-white rounded-lg shadow-lg overflow-hidden transform transition-transform duration-500 hover:scale-105"
                 style={{
                   animation: `fadeInUp 0.7s ease-out ${index * 0.1}s both`
@@ -111,7 +115,7 @@ const CategoryGrid = () => {
           }
         }
       `}</style>
-      
+
       <Footer />
     </div>
   );

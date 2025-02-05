@@ -31,6 +31,11 @@ const ProductList = () => {
 
   // Derived states for filter options
   const [availableColors, setAvailableColors] = useState([]);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Fetch user's wishlist
   useEffect(() => {
     const fetchWishlist = async () => {
@@ -52,7 +57,7 @@ const ProductList = () => {
     e.preventDefault();
     e.stopPropagation();
 
-    if(!loggedIn || !userId) {
+    if (!loggedIn || !userId) {
       setAlertMessage({ message: 'Please login to add to wishlist', type: 'error' });
       return;
     }

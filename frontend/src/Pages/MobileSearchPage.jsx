@@ -20,11 +20,15 @@ const MobileSearch = () => {
 
   const userId = localStorage.getItem('userId');
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Fetch wishlist on component mount
   useEffect(() => {
     const fetchWishlist = async () => {
       if (!userId) return;
-      
+
       try {
         const response = await fetch(`/api/wishlist/${userId}`);
         const data = await response.json();
@@ -90,7 +94,7 @@ const MobileSearch = () => {
     // Apply price range filter
     if (filters.priceRange !== 'all') {
       const [min, max] = filters.priceRange.split('-').map(Number);
-      results = results.filter(product => 
+      results = results.filter(product =>
         product.CurrentPrice >= min && (max ? product.CurrentPrice <= max : true)
       );
     }
@@ -113,7 +117,7 @@ const MobileSearch = () => {
     }
 
     try {
-      const isInWishlist = wishlist.some(item => 
+      const isInWishlist = wishlist.some(item =>
         item.product_id && item.product_id._id === productId
       );
 
@@ -128,7 +132,7 @@ const MobileSearch = () => {
 
       if (response.ok) {
         if (isInWishlist) {
-          setWishlist(prev => prev.filter(item => 
+          setWishlist(prev => prev.filter(item =>
             item.product_id && item.product_id._id !== productId
           ));
           showAlert('Removed from wishlist', 'success');
@@ -259,9 +263,8 @@ const MobileSearch = () => {
 
       {/* Alert Message */}
       {alertMessage && (
-        <div className={`fixed bottom-4 left-4 right-4 p-3 rounded-lg text-center text-white ${
-          alertMessage.type === 'success' ? 'bg-black' : 'bg-red-500'
-        }`}>
+        <div className={`fixed bottom-4 left-4 right-4 p-3 rounded-lg text-center text-white ${alertMessage.type === 'success' ? 'bg-black' : 'bg-red-500'
+          }`}>
           {alertMessage.message}
         </div>
       )}
