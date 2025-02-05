@@ -48,6 +48,21 @@ app.use('/api/chatbot', chatRoute);
 const __dirname = path.resolve()
 app.use('/uploads', express.static(path.join(__dirname + '/uploads')));
 
+// Serve frontend
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '/frontend/dist')));
+
+    // Serve index.html for all other routes
+    app.get('*', (req, res) => {
+        res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+    });
+} else {
+    app.get('/', (req, res) => {
+        res.send('API is running...');
+    });
+}
+
+
 app.listen(port, () => {
     console.log(`server is running on ${process.env.PORT}`);
 })
