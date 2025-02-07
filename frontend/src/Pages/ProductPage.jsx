@@ -42,7 +42,7 @@ const ProductPage = () => {
     const openShare = (platform) => {
         const text = "Check out this product!";
         const productId = "12345";
-        const baseUrl = "https://example.com";
+        const baseUrl = "https://adaa-jaipur.onrender.com/";
         const url = `${baseUrl}/product?productId=${encodeURIComponent(productId)}`;
 
         const shareUrls = {
@@ -64,7 +64,7 @@ const ProductPage = () => {
         if (navigator.share) {
             navigator.share({
                 title: text,
-                url: `https://example.com/product?productId=${encodeURIComponent(productId)}`,
+                url: `https://adaa-jaipur.onrender.com/product?productId=${encodeURIComponent(productId)}`,
             }).catch((error) => console.error("Error sharing:", error));
         } else {
             document.getElementById("shareOptions").style.display = "block"; // Show buttons
