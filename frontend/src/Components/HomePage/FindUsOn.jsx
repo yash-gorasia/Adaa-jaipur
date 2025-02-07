@@ -16,7 +16,7 @@ const FindUsOn = () => {
   ];
 
   return (
-    <div className="bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 mb-[12%] md:mb-0">
+    <div className=" py-12 px-4 sm:px-6 lg:px-8 mb-[12%] md:mb-0">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-bold text-center text-gray-800 mb-10">You Can Also Find Us On</h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-6 gap-8">

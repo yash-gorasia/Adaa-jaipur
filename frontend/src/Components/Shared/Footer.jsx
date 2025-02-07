@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { FaFacebookF, FaInstagram, FaYoutube, FaPinterest } from 'react-icons/fa';
 import logo from '../../Images/logo.png';
+import { Link } from 'react-router-dom';
 
 const Footer = () => {
     return (
@@ -15,17 +16,30 @@ const Footer = () => {
                 <div>
                     <h2 className="text-lg font-semibold">Quick Links</h2>
                     <ul className="mt-2 space-y-2">
-                        {['Home', 'About Us', 'Contact Us', 'All Collections', 'All Products'].map((link, index) => (
-                            <li key={index} className="hover:text-gray-400 cursor-pointer">{link}</li>
+                        {[
+                            { name: "Home", path: "/home" },
+                            { name: "About Us", path: "/aboutus" },
+                            { name: "All Collections", path: "/collections" },
+                            { name: "All Products", path: "/products" }
+                        ].map((link, index) => (
+                            <li key={index} className="hover:text-gray-400 cursor-pointer">
+                                <Link to={link.path}>{link.name}</Link>
+                            </li>
                         ))}
                     </ul>
                 </div>
-
                 <div>
                     <h2 className="text-lg font-semibold">Policies</h2>
                     <ul className="mt-2 space-y-2">
-                        {['Refund Policy', 'Shipping Policy', 'Terms of Service', 'Privacy Policy'].map((policy, index) => (
-                            <li key={index} className="hover:text-gray-400 cursor-pointer">{policy}</li>
+                        {[
+                            { name: "Refund Policy", path: "/refund-policy" },
+                            { name: "Shipping Policy", path: "/aboutus" },
+                            { name: "Terms of Service", path: "/collections" },
+                            { name: "Privacy Policy", path: "/products" }
+                        ].map((link, index) => (
+                            <li key={index} className="hover:text-gray-400 cursor-pointer">
+                                <Link to={link.path}>{link.name}</Link>
+                            </li>
                         ))}
                     </ul>
                 </div>

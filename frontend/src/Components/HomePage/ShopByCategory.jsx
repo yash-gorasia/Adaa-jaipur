@@ -1,29 +1,16 @@
-import React, { useState, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { MdError } from 'react-icons/md';
 import { motion } from 'framer-motion';
-import about_us from '../../Images/about_us.jpg';
-import about_us_mob from '../../Images/about_us_mob.jpg';
 
 const ShopByCategory = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [aboutUs, setAboutUs] = useState("");
   const [error, setError] = useState(null);
 
   const allowedCategories = ['Bottoms', 'Gowns', 'Kurta Set', 'Kurta', 'Tops'];
 
-  useLayoutEffect(() => {
-    const updateImage = () => {
-      setAboutUs(window.innerWidth >= 768 ? about_us : about_us_mob);
-    };
-
-    updateImage();
-
-    window.addEventListener('resize', updateImage);
-    return () => window.removeEventListener('resize', updateImage);
-  }, []);
 
 
   // Fetch categories
@@ -129,15 +116,6 @@ const ShopByCategory = () => {
             </NavLink>
           ))}
         </div>
-      </div>
-
-      {/* Belt image section */}
-      <div className="w-full pt-16 px-4 md:px-8 aspect-w-16 aspect-h-9">
-        <img
-          src={aboutUs}
-          alt="Belt"
-          className="w-full h-full object-cover rounded-lg shadow-lg"
-        />
       </div>
 
       <style jsx>{`
