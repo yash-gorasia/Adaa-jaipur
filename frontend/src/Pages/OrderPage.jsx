@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiTruck, FiCheckCircle, FiXCircle, FiClock, FiPackage, FiSearch, FiFilter } from 'react-icons/fi';
 import Header from '../Components/Shared/Header';
+import Footer from '../Components/Shared/Footer';
 
 const OrderPage = () => {
     const userId = localStorage.getItem('userId');
@@ -220,6 +221,7 @@ const OrderPage = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     );
 };

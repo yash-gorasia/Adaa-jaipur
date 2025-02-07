@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaPlus } from 'react-icons/fa'; // Plus icon for adding addresses
+import Footer from '../Components/Shared/Footer';
 
 const CompleteProfile = () => {
     const navigate = useNavigate();
@@ -187,6 +188,7 @@ const CompleteProfile = () => {
                     </div>
                 </form>
             </div>
+            <Footer />
         </div>
     );
 };

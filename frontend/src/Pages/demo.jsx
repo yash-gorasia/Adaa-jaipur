@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FiEdit, FiSave, FiTrash, FiMapPin, FiUser, FiPhone, FiMail, FiCreditCard, FiDollarSign, FiPlus, FiUpload } from 'react-icons/fi';
 import Header from '../Components/Shared/Header';
+import Footer from '../Components/Shared/Footer';
 
 const ProfilePage = () => {
     const userId = localStorage.getItem('userId');
@@ -216,6 +217,7 @@ const ProfilePage = () => {
                     </div>
                 </div>
             </div>
+            <Footer />
         </div>
     );
 };

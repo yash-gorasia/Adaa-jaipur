@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import { MdError } from 'react-icons/md';
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
+import MobileNav from '../Components/Shared/MobileNav';
 import Footer from '../Components/Shared/Footer';
 
 const CategoryGrid = () => {
@@ -115,8 +116,7 @@ const CategoryGrid = () => {
           }
         }
       `}</style>
-
-      <Footer />
+      <MobileNav />
     </div>
   );
 };

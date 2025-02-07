@@ -1,116 +1,54 @@
-import React, { useState, useEffect } from 'react';
-import { NavLink } from 'react-router-dom';
-import {
-  HiHome,
-  HiOutlineMenu,
-  HiOutlineShoppingCart,
-  HiOutlineHeart,
-  HiOutlineUser,
-  HiOutlineSearch
-} from 'react-icons/hi';
+import React from 'react';
+import { motion } from 'framer-motion';
+import { FaFacebookF, FaInstagram, FaYoutube, FaPinterest } from 'react-icons/fa';
+import logo from '../../Images/logo.png';
 
 const Footer = () => {
-  const userId = localStorage.getItem('userId');
-  const isLogin = localStorage.getItem('isLogin');
-  const [activeTab, setActiveTab] = useState('home');
-  const [cartItemsCount, setCartItemsCount] = useState([]);
+    return (
+        <motion.footer
+            className="bg-black text-white py-10 px-5 md:px-20"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div>
+                    <h2 className="text-lg font-semibold">Quick Links</h2>
+                    <ul className="mt-2 space-y-2">
+                        {['Home', 'About Us', 'Contact Us', 'All Collections', 'All Products'].map((link, index) => (
+                            <li key={index} className="hover:text-gray-400 cursor-pointer">{link}</li>
+                        ))}
+                    </ul>
+                </div>
 
-  useEffect(() => {
-    const fetchCartItems = async () => {
-      if (isLogin && userId) {
-        try {
-          const response = await fetch(`/api/cart/fetchCartItemsByUserId/${userId}`);
-          if (!response.ok) {
-            throw new Error('Failed to fetch cart items');
-          }
-          const cartData = await response.json();
-          setCartItemsCount(cartData.length);
-        } catch (error) {
-          console.error('Error fetching cart items:', error);
-        }
-      }
-    };
+                <div>
+                    <h2 className="text-lg font-semibold">Policies</h2>
+                    <ul className="mt-2 space-y-2">
+                        {['Refund Policy', 'Shipping Policy', 'Terms of Service', 'Privacy Policy'].map((policy, index) => (
+                            <li key={index} className="hover:text-gray-400 cursor-pointer">{policy}</li>
+                        ))}
+                    </ul>
+                </div>
 
-    fetchCartItems();
-    window.addEventListener('cartUpdated', fetchCartItems);
-    return () => {
-      window.removeEventListener('cartUpdated', fetchCartItems);
-    };
-  }, [isLogin, userId]);
-
-  const navItems = [
-    {
-      name: 'Home',
-      icon: HiHome,
-      path: '/home',
-      key: 'home'
-    },
-    {
-      name: 'Categories',
-      icon: HiOutlineMenu,
-      path: '/categories',
-      key: 'categories'
-    },
-    {
-      name: 'Search',
-      icon: HiOutlineSearch,
-      path: '/mobilesearch',
-      key: 'search'
-    },
-    {
-      name: 'Cart',
-      icon: HiOutlineShoppingCart,
-      path: '/cart',
-      key: 'cart'
-    },
-    {
-      name: 'Wishlist',
-      icon: HiOutlineHeart,
-      path: '/wishlist',
-      key: 'wishlist'
-    },
-    {
-      name: 'Profile',
-      icon: HiOutlineUser,
-      path: '/profile',
-      key: 'profile'
-    }
-  ];
-
-  return (
-    <footer className="md:hidden fixed bottom-0 left-0 right-0 w-full bg-white shadow-2xl z-50 border-t border-gray-100">
-      <nav className="max-w-screen-xl mx-auto px-2 py-2">
-        <div className="flex justify-around items-center">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.key}
-              to={item.path}
-              onClick={() => setActiveTab(item.key)}
-              className={({ isActive }) => `
-                flex flex-col items-center gap-1 
-                transition-all duration-300 ease-in-out 
-                ${isActive || activeTab === item.key
-                  ? 'text-blue-900 scale-110'
-                  : 'text-gray-600 hover:text-blue-900 hover:scale-110'
-                }
-              `}
-              aria-label={item.name}
-            >
-              <div className="relative">
-                <item.icon size={22} />
-                {item.key === 'cart' && isLogin && cartItemsCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-rose-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cartItemsCount}
-                  </span>
-                )}
-              </div>
-              <span className="text-[10px] font-medium">{item.name}</span>
-            </NavLink>
-          ))}
-        </div>
-      </nav>
-    </footer>
-  );
+                <div>
+                    <h2 className="text-lg font-semibold">Contact Info</h2>
+                    <p className="mt-2">Phone: +91 98281 70003</p>
+                    <p>Address: H-5, RIICO MANSAROVAR INDUSTRIAL AREA, JAIPUR - 302020</p>
+                    <p className="mt-4 italic">"Style Yourself With Adaa"</p>
+                    <div className="flex space-x-4 mt-4">
+                        <a href="https://www.facebook.com/Adaajaipur.official?_rdr"><FaFacebookF className="text-xl cursor-pointer hover:text-gray-400" /></a>
+                        <a href="https://www.instagram.com/adaajaipur.official/"><FaInstagram className="text-xl cursor-pointer hover:text-gray-400" /></a>
+                        <a href="https://www.youtube.com/channel/UC9Ccd68grj8EgEwHd3d8G_A"><FaYoutube className="text-xl cursor-pointer hover:text-gray-400" /></a>
+                        <a href="https://in.pinterest.com/adaajaipur/"><FaPinterest className="text-xl cursor-pointer hover:text-gray-400" /></a>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <img src={logo} alt="Adaa-Jaipur" className="w-60 mx-auto mt-8" />
+            </div>
+            <p className="text-center mt-8 text-gray-500">&copy; {new Date().getFullYear()} Adaa-Jaipur. All Rights Reserved.</p>
+        </motion.footer>
+    );
 };
 
 export default Footer;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Header from '../Components/Shared/Header';
 import Alert from '../Components/Shared/Alert';
+import Footer from '../Components/Shared/Footer';
 import { FaPlus } from 'react-icons/fa';
 
 const OrderSummaryPage = () => {
@@ -251,6 +252,7 @@ const OrderSummaryPage = () => {
                     Proceed to Payment
                 </button>
             </div>
+            <Footer />
         </div>
     );
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HiOutlineShoppingBag, HiOutlineTrash } from 'react-icons/hi';
 import Header from '../Components/Shared/Header';
 import Alert from '../Components/Shared/Alert';
+import Footer from '../Components/Shared/Footer';
 import { Link, useNavigate } from 'react-router-dom';
 
 const CartPage = () => {
@@ -357,6 +358,7 @@ const CartPage = () => {
                     </div>
                 )}
             </div>
+            <Footer />
         </div>
     );
 };

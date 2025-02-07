@@ -1,6 +1,6 @@
 import React from 'react';
 import Nav from './Nav';
-import Footer from './Footer';
+import MobileNav from './MobileNav';
 
 export default function Header({ transparent = true }) {
   //bg-dark-brown hidden md:flex shadow-md sticky top-0 z-20 mx-auto flex items-center justify-between p-6
@@ -9,7 +9,7 @@ export default function Header({ transparent = true }) {
     <header className='hidden md:flex '>
       <Nav transparent={transparent} />
     </header>
-    <Footer/>
+    <MobileNav />
     </div>
   );
 }

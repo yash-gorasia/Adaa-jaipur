@@ -23,10 +23,6 @@ const AdminPage = () => {
         }
     };
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
-
     return (
         <div className="flex">
             <Sidebar onSelect={setSelected} />

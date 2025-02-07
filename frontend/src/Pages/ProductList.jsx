@@ -7,6 +7,7 @@ import { IoClose } from 'react-icons/io5';
 import Alert from '../Components/Shared/Alert';
 import NoProduct from '../Images/noproducts.jpeg';
 import FloatingChat from '../Components/Shared/Chatbot';
+
 const ProductList = () => {
   const location = useLocation();
   const { categoryId } = location.state || {};

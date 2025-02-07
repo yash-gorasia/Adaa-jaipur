@@ -12,6 +12,7 @@ import FindUsOn from './Components/HomePage/FindUsOn';
 import ShopByCategory from './Components/HomePage/ShopByCategory'
 import SearchComponent from './Components/Shared/SearchComponent';
 import FloatingChat from './Components/Shared/Chatbot';
+import Footer from './Components/Shared/Footer';
 export default function App() {
   const handleScroll = () => {
     window.scrollTo({
@@ -35,6 +36,7 @@ export default function App() {
       {/* <FeatureCards/> */}
       <FindUsOn />
       <FloatingChat userId={userId} pageType={"home"} />
+      <Footer />
     </div>
 
   );

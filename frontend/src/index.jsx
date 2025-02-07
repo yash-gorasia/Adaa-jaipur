@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import AboutUs from './Pages/AboutUs';
 import ProductList from './Pages/ProductList';
 import ProductListBySubCategories from './Pages/ProductListBySubCategories';
 import Login from './Pages/Login';
@@ -33,7 +32,6 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/about" element={<AboutUs />} />
         <Route path="/productlist" element={<ProductList />} />
         <Route path="/productlistsub" element={<ProductListBySubCategories />} />
         <Route path="/login" element={<Login />} />

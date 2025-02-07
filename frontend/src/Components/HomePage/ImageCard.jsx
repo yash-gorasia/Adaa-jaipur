@@ -4,6 +4,7 @@ import RimJim from '../../Images/RimJim.jpg';
 import Saanjh from '../../Images/Saanjh.jpg';
 import Najarah from '../../Images/Najarah.jpg';
 
+
 const ImageCards = () => {
   const images = [
     { name: 'RimJim', src: RimJim, id: '678e3ff913d9c330a8804323' },
@@ -39,106 +40,112 @@ const ImageCards = () => {
   };
 
   return (
-    <div className="flex justify-center items-center mt-[5%] bg-gray-100 flex-grow pb-24">
-      {/* Desktop view with enhanced animations */}
-      <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-4 md:px-8">
-        {images.map((image, index) => (
-          <div
-            key={index}
-            className="card-wrapper group relative overflow-hidden rounded-lg cursor-pointer"
-            onClick={() => handleCardClick(image.id)}
-          >
-            {/* Animated border overlay */}
-            <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500 transition-all duration-500 rounded-lg z-10"></div>
+    <div className="py-12 ">
+      {/* Unique heading style */}
+      <div className="text-center pb-10">
+        <h2 className="text-3xl  text-gray-900 tracking-tight" >
+          Explore Collections
+        </h2>
+      </div>
+      <div className="flex flex-col justify-center items-center mt-[1%] flex-grow md:pb-0">
+        {/* Desktop view with enhanced animations */}
+        <div className="hidden md:grid grid-cols-1 md:grid-cols-3 gap-6 w-full px-4 md:px-8">
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className="card-wrapper group relative overflow-hidden rounded-lg cursor-pointer"
+              onClick={() => handleCardClick(image.id)}
+            >
+              {/* Animated border overlay */}
+              <div className="absolute inset-0 border-2 border-transparent group-hover:border-blue-500 transition-all duration-500 rounded-lg z-10"></div>
 
-            {/* Glowing effect container */}
-            <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-              <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-xl transform scale-150"></div>
-            </div>
+              {/* Glowing effect container */}
+              <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-500/20 blur-xl transform scale-150"></div>
+              </div>
 
-            {/* Main card container */}
-            <div className="relative bg-white rounded-lg shadow-lg transform transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-2xl overflow-hidden">
-              {/* Image container with hover effects */}
-              <div className="aspect-w-1 aspect-h-1 overflow-hidden">
-                <img
-                  src={image.src}
-                  alt={image.name}
-                  className="w-full h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-110"
-                />
+              {/* Main card container */}
+              <div className="relative bg-white rounded-lg shadow-lg transform transition-all duration-500 group-hover:scale-[1.02] group-hover:shadow-2xl overflow-hidden">
+                {/* Image container with hover effects */}
+                <div className="aspect-w-1 aspect-h-1 overflow-hidden">
+                  <img
+                    src={image.src}
+                    alt={image.name}
+                    className="w-full h-full object-contain transition-transform duration-500 ease-in-out group-hover:scale-110"
+                  />
 
-                {/* Overlay gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                  {/* Overlay gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                {/* Shine effect */}
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-                  <div className="absolute inset-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 animate-shine"></div>
+                  {/* Shine effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+                    <div className="absolute inset-[-100%] bg-gradient-to-r from-transparent via-white/20 to-transparent skew-x-12 animate-shine"></div>
+                  </div>
+                </div>
+
+                {/* Card caption */}
+                <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black/70 to-transparent">
+                  <h3 className="text-white text-lg font-semibold">{image.name}</h3>
                 </div>
               </div>
-
-              {/* Card caption */}
-              <div className="absolute bottom-0 left-0 right-0 p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-gradient-to-t from-black/70 to-transparent">
-                <h3 className="text-white text-lg font-semibold">{image.name}</h3>
-              </div>
             </div>
-          </div>
-        ))}
-      </div>
-
-      {/* Mobile view - keeping original functionality */}
-      <div className="md:hidden w-full px-4">
-        <div className="relative overflow-hidden rounded-lg shadow-lg">
-          <div className="aspect-w-1 aspect-h-1">
-            <img
-              onClick={() => handleCardClick(images[currentIndex].id)}
-              src={images[currentIndex].src}
-              alt={images[currentIndex].name}
-              className="w-full h-full object-contain transition-transform duration-500 transform"
-            />
-            {console.log('passing', images[currentIndex].id)}
-          </div>
-
-          <div className="absolute top-1/2 left-0 transform -translate-y-1/2 p-4">
-            <button
-              onClick={prevImage}
-              className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-800"
-              aria-label="Previous image"
-            >
-              &lt;
-            </button>
-          </div>
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2 p-4">
-            <button
-              onClick={nextImage}
-              className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-800"
-              aria-label="Next image"
-            >
-              &gt;
-            </button>
-          </div>
-        </div>
-
-        <div className="flex justify-center mt-4">
-          {images.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => handleCardClick(images[index].id)}
-              className={`w-2.5 h-2.5 rounded-full mx-2 ${
-                currentIndex === index ? 'bg-gray-700' : 'bg-gray-300'
-              }`}
-            />
           ))}
         </div>
 
-        <div className="text-center mt-4 text-white">
-          <span>
-            {currentIndex + 1}/{images.length}
-          </span>
-        </div>
-      </div>
+        {/* Mobile view - keeping original functionality */}
+        <div className="md:hidden w-full px-4">
+          <div className="relative overflow-hidden rounded-lg shadow-lg">
+            <div className="aspect-w-1 aspect-h-1">
+              <img
+                onClick={() => handleCardClick(images[currentIndex].id)}
+                src={images[currentIndex].src}
+                alt={images[currentIndex].name}
+                className="w-full h-full object-contain transition-transform duration-500 transform"
+              />
+              {console.log('passing', images[currentIndex].id)}
+            </div>
 
-      {/* Additional styles for animations */}
-      <style>{`
-        @keyframes shine {
+            <div className="absolute top-1/2 left-0 transform -translate-y-1/2 p-4">
+              <button
+                onClick={prevImage}
+                className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-800"
+                aria-label="Previous image"
+              >
+                &lt;
+              </button>
+            </div>
+            <div className="absolute top-1/2 right-0 transform -translate-y-1/2 p-4">
+              <button
+                onClick={nextImage}
+                className="bg-gray-700 text-white p-2 rounded-full hover:bg-gray-800"
+                aria-label="Next image"
+              >
+                &gt;
+              </button>
+            </div>
+          </div>
+
+          <div className="flex justify-center mt-4">
+            {images.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleCardClick(images[index].id)}
+                className={`w-2.5 h-2.5 rounded-full mx-2 ${currentIndex === index ? 'bg-gray-700' : 'bg-gray-300'
+                  }`}
+              />
+            ))}
+          </div>
+
+          <div className="text-center mt-4 text-white">
+            <span>
+              {currentIndex + 1}/{images.length}
+            </span>
+          </div>
+        </div>
+
+        {/* Additional styles for animations */}
+        <style>{
+          `@keyframes shine {
           0% {
             transform: translateX(-100%) skewX(12deg);
           }
@@ -194,8 +201,9 @@ const ImageCards = () => {
           opacity: 1;
           transform: translateX(100%) rotate(45deg);
           transition: transform 0.7s ease;
-        }
-      `}</style>
+        }`
+        }</style>
+      </div>
     </div>
   );
 };

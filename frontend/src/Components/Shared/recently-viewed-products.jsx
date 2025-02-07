@@ -39,7 +39,7 @@ const RecentlyViewedProducts = () => {
   if (loading || recentProducts.length === 0) return null;
 
   return (
-    <div className="py-12 bg-gray-50">
+    <div className="py-12">
       {/* Unique heading style */}
       <div className="text-center mb-10">
         <h2 className="text-4xl  text-gray-900 tracking-tight" >
