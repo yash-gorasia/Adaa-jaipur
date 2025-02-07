@@ -101,7 +101,7 @@ const AdminCategoriesPage = () => {
   };
 
   return (
-    <div className="container mt-8 mx-auto p-6 max-w-6xl">
+    <div className="container bg-white  mt-8 mx-auto p-6 max-w-6xl">
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-8">
         <h1 className="text-3xl font-bold text-gray-800 mb-4 md:mb-0">
@@ -122,7 +122,7 @@ const AdminCategoriesPage = () => {
       </div>
 
       {/* Category Form */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+      <div className="bg-white rounded-xl  p-6 mb-8">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold text-gray-800">
             {editingCategory ? "Edit Category" : "Add New Category"}

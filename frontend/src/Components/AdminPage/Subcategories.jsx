@@ -232,7 +232,7 @@ const SubcategoriesManagement = () => {
       {/* Subcategories List */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <table className="w-full">
-          <thead className="bg-gray-50">
+          <thead className="bg-white">
             <tr>
               <th
                 className="px-6 py-3 text-left cursor-pointer"
@@ -255,7 +255,7 @@ const SubcategoriesManagement = () => {
               <th className="px-6 py-3 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className='bg-white'>
             {filteredSubcategories.map(subcategory => (
               <tr key={subcategory._id} className="border-t">
                 <td className="px-6 py-4">{subcategory.subcategory_name}</td>

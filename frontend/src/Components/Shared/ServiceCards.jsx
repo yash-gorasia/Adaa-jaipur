@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaShippingFast, FaBox, FaShieldAlt, FaLock, FaUndoAlt, FaCheckCircle } from 'react-icons/fa';
 
-const ServiceCard = ({ 
+const ServiceCard = ({
   Icon,
   HoverIcon,
   title,
@@ -12,7 +12,7 @@ const ServiceCard = ({
   const [isHovered, setIsHovered] = useState(false);
 
   return (
-    <div 
+    <div
       className={`
         relative overflow-hidden rounded-xl 
         bg-white 
@@ -61,6 +61,9 @@ const ServiceCard = ({
 const ServiceCards = () => {
   return (
     <div className="container mx-auto px-4 py-12">
+      <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">
+        Hassle-Free Shopping
+      </h1>
       <div className="grid grid-cols-3 md:grid-cols-3 gap-6">
         <ServiceCard
           Icon={FaShippingFast}

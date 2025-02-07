@@ -62,7 +62,7 @@ const ShopByCategory = () => {
           {categories.map((category) => (
             <motion.div
               key={category._id}
-              className="flex-shrink-0 w-60 h-60 rounded-full overflow-hidden shadow-lg cursor-pointer relative"
+              className="flex-shrink-0 w-56 h-56 rounded-full overflow-hidden shadow-lg cursor-pointer relative"
               whileHover={{
                 y: -20,
                 scale: 1.1,

@@ -60,7 +60,7 @@ const ProductPage = () => {
     });
 
   return (
-    <div className="min-h-screen mt-8 bg-gray-50 p-6">
+    <div className="min-h-screen mt-8 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="mb-8">
